@@ -4,11 +4,17 @@ public class MazeCell : MonoBehaviour
 {
 	public IntVector2 coordinates = default;
 	private int initializedEdgeCount = default;
-
+	public MazeRoom room;
 
 	public bool IsFullyInitialized => initializedEdgeCount == MazeDirections.Count;
 	private MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
 	public MazeCellEdge GetEdge(MazeDirection direction) => edges[(int)direction];
+
+	public void Initialize(MazeRoom room)
+	{
+		room.Add(this);
+		transform.GetChild(0).GetComponent<Renderer>().material = room.Settings.floorMaterial;
+	}
 
 	public void SetEdge(MazeDirection direction, MazeCellEdge edge)
 	{

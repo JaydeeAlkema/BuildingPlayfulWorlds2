@@ -2,8 +2,8 @@
 
 public class MazeCell : MonoBehaviour
 {
-	public IntVector2 coordinates;
-	private int initializedEdgeCount;
+	public IntVector2 coordinates = default;
+	private int initializedEdgeCount = default;
 
 
 	public bool IsFullyInitialized => initializedEdgeCount == MazeDirections.Count;

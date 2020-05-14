@@ -4,7 +4,7 @@ public abstract class MazeCellEdge : MonoBehaviour
 {
 	public MazeCell cell, otherCell;
 
-	public MazeDirection direction;
+	public MazeDirection direction = default;
 
 	public void Initialize(MazeCell cell, MazeCell otherCell, MazeDirection direction)
 	{

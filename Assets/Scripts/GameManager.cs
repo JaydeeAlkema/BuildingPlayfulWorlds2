@@ -3,7 +3,7 @@
 public class GameManager : MonoBehaviour
 {
 	#region Variables
-	[SerializeField] private Maze mazePrefab;
+	[SerializeField] private Maze mazePrefab = default;
 	private Maze mazeInstance;
 	#endregion
 

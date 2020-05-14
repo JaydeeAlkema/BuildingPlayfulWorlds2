@@ -4,11 +4,11 @@ using UnityEngine;
 public class Maze : MonoBehaviour
 {
 	#region Variables
-	[SerializeField] private IntVector2 size;
-	[SerializeField] private MazeCell cellPrefab;
-	[SerializeField] private MazePassage passagePrefab;
-	[SerializeField] private MazeWall wallPrefab;
-	[SerializeField] private MazeCell[,] cells;
+	[SerializeField] private IntVector2 size = default;
+	[SerializeField] private MazeCell cellPrefab = default;
+	[SerializeField] private MazePassage passagePrefab = default;
+	[SerializeField] private MazeWall wallPrefab = default;
+	[SerializeField] private MazeCell[,] cells = default;
 	#endregion
 
 	#region Methods

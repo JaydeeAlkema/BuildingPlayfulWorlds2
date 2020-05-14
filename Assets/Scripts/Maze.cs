@@ -9,6 +9,9 @@ public class Maze : MonoBehaviour
 	[SerializeField] private MazePassage passagePrefab = default;
 	[SerializeField] private MazeWall wallPrefab = default;
 	[SerializeField] private MazeCell[,] cells = default;
+	[SerializeField] private MazeDoor doorPrefab = default;
+	[Space]
+	[SerializeField] [Range(0f, 1f)] private float doorProbability = default;
 	#endregion
 
 	#region Methods
@@ -78,9 +81,10 @@ public class Maze : MonoBehaviour
 
 	private void CreatePassage(MazeCell cell, MazeCell otherCell, MazeDirection direction)
 	{
-		MazePassage passage = Instantiate(passagePrefab) as MazePassage;
+		MazePassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
+		MazePassage passage = Instantiate(prefab) as MazePassage;
 		passage.Initialize(cell, otherCell, direction);
-		passage = Instantiate(passagePrefab) as MazePassage;
+		passage = Instantiate(prefab) as MazePassage;
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
 	}
 

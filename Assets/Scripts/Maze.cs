@@ -8,10 +8,14 @@ public class Maze : MonoBehaviour
 	[SerializeField] private MazeCell cellPrefab = default;
 	[SerializeField] private MazePassage passagePrefab = default;
 	[SerializeField] private MazeWall wallPrefab = default;
-	[SerializeField] private MazeCell[,] cells = default;
 	[SerializeField] private MazeDoor doorPrefab = default;
 	[Space]
-	[SerializeField] [Range(0f, 1f)] private float doorProbability = default;
+	[SerializeField] [Range(0f, 0.1f)] private float doorProbability = default;
+	[Space]
+	[SerializeField] private MazeRoomSettings[] roomSettings = default;
+	[Space]
+	[SerializeField] private MazeCell[,] cells = default;
+	[SerializeField] private List<MazeRoom> rooms = new List<MazeRoom>();
 	#endregion
 
 	#region Methods
@@ -34,7 +38,9 @@ public class Maze : MonoBehaviour
 
 	private void DoFirstGenerationStep(List<MazeCell> activeCells)
 	{
-		activeCells.Add(CreateCell(GetRandomCoordinates()));
+		MazeCell newCell = CreateCell(GetRandomCoordinates());
+		newCell.Initialize(CreateRoom(-1));
+		activeCells.Add(newCell);
 	}
 
 	private void DoNextGenerationStep(List<MazeCell> activeCells)
@@ -56,6 +62,10 @@ public class Maze : MonoBehaviour
 				neighbor = CreateCell(coordinates);
 				CreatePassage(currentCell, neighbor, direction);
 				activeCells.Add(neighbor);
+			}
+			else if(currentCell.room.SettingsIndex == neighbor.room.SettingsIndex)
+			{
+				CreatePassageInSameRoom(currentCell, neighbor, direction);
 			}
 			else
 			{
@@ -85,7 +95,29 @@ public class Maze : MonoBehaviour
 		MazePassage passage = Instantiate(prefab) as MazePassage;
 		passage.Initialize(cell, otherCell, direction);
 		passage = Instantiate(prefab) as MazePassage;
+		if(passage is MazeDoor)
+		{
+			otherCell.Initialize(CreateRoom(cell.room.SettingsIndex));
+		}
+		else
+		{
+			otherCell.Initialize(cell.room);
+		}
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
+	}
+
+	private void CreatePassageInSameRoom(MazeCell cell, MazeCell otherCell, MazeDirection direction)
+	{
+		MazePassage passage = Instantiate(passagePrefab) as MazePassage;
+		passage.Initialize(cell, otherCell, direction);
+		passage = Instantiate(passagePrefab) as MazePassage;
+		passage.Initialize(otherCell, cell, direction.GetOpposite());
+		if(cell.room != otherCell.room)
+		{
+			MazeRoom roomToAssimilate = otherCell.room;
+			cell.room.Assimilate(roomToAssimilate);
+			Destroy(roomToAssimilate);
+		}
 	}
 
 	private void CreateWall(MazeCell cell, MazeCell otherCell, MazeDirection direction)
@@ -97,6 +129,19 @@ public class Maze : MonoBehaviour
 			wall = Instantiate(wallPrefab) as MazeWall;
 			wall.Initialize(otherCell, cell, direction.GetOpposite());
 		}
+	}
+
+	private MazeRoom CreateRoom(int indexToExclude)
+	{
+		MazeRoom newRoom = ScriptableObject.CreateInstance<MazeRoom>();
+		newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
+		if(newRoom.SettingsIndex == indexToExclude)
+		{
+			newRoom.SettingsIndex = (newRoom.SettingsIndex + 1) % roomSettings.Length;
+		}
+		newRoom.Settings = roomSettings[newRoom.SettingsIndex];
+		rooms.Add(newRoom);
+		return newRoom;
 	}
 	#endregion
 }

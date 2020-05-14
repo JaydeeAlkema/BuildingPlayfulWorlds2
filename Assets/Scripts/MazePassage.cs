@@ -1,1 +1,3 @@
-﻿public class MazePassage : MazeCellEdge { }
+﻿using UnityEngine;
+
+public class MazePassage : MazeCellEdge { }

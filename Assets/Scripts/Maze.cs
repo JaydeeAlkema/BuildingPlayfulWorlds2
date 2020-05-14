@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Maze : MonoBehaviour
@@ -16,16 +17,18 @@ public class Maze : MonoBehaviour
 	[Space]
 	[SerializeField] private MazeCell[,] cells = default;
 	[SerializeField] private List<MazeRoom> rooms = new List<MazeRoom>();
+
 	#endregion
 
-	#region Methods
+	#region Methods & Properties
 	public IntVector2 GetRandomCoordinates() => new IntVector2(Random.Range(0, size.x), Random.Range(0, size.z));
 	public bool ContainsCoordinates(IntVector2 coordinate) => coordinate.x >= 0 && coordinate.x < size.x && coordinate.z >= 0 && coordinate.z < size.z;
 	public MazeCell GetCell(IntVector2 coordinates) => cells[coordinates.x, coordinates.z];
+	public List<MazeRoom> Rooms { get => rooms; set => rooms = value; }
 	#endregion
 
 	#region Functions
-	public void Generate()
+	public IEnumerator Generate()
 	{
 		cells = new MazeCell[size.x, size.z];
 		List<MazeCell> activeCells = new List<MazeCell>();
@@ -34,6 +37,13 @@ public class Maze : MonoBehaviour
 		{
 			DoNextGenerationStep(activeCells);
 		}
+		for(int i = 0; i < rooms.Count; i++)
+		{
+			rooms[i].Hide();
+		}
+		rooms[0].Show();
+
+		yield return new WaitForEndOfFrame();
 	}
 
 	private void DoFirstGenerationStep(List<MazeCell> activeCells)

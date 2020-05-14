@@ -25,6 +25,8 @@ public class Maze : MonoBehaviour
 	public bool ContainsCoordinates(IntVector2 coordinate) => coordinate.x >= 0 && coordinate.x < size.x && coordinate.z >= 0 && coordinate.z < size.z;
 	public MazeCell GetCell(IntVector2 coordinates) => cells[coordinates.x, coordinates.z];
 	public List<MazeRoom> Rooms { get => rooms; set => rooms = value; }
+	public IntVector2 Size { get => size; set => size = value; }
+	public float DoorProbability { get => doorProbability; set => doorProbability = value; }
 	#endregion
 
 	#region Functions

@@ -19,8 +19,8 @@ public class PlayerMovementBehaviour : MonoBehaviour
 	[SerializeField] private float jumpMultiplier = default;
 	[SerializeField] private KeyCode jumpKey = default;
 	[Space]
-	[SerializeField] private MazeCell cellUnderneathPlayer = default;
-	[SerializeField] private MazeCell previousCellUnderneathPlayer = default;
+	[SerializeField] private DungeonCell cellUnderneathPlayer = default;
+	[SerializeField] private DungeonCell previousCellUnderneathPlayer = default;
 	private CharacterController charController = default;
 
 	private void Awake()
@@ -97,10 +97,10 @@ public class PlayerMovementBehaviour : MonoBehaviour
 	private void CheckForCellUnderneathPlayer()
 	{
 		if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, charController.height / 2f * slopeForceRayLength))
-			if(hit.collider.GetComponentInParent<MazeCell>())
+			if(hit.collider.GetComponentInParent<DungeonCell>())
 			{
-				//Debug.Log("Hit: " + hit.collider.GetComponentInParent<MazeCell>().name);
-				hit.collider.GetComponentInParent<MazeCell>().OnPlayerEntered();
+				//Debug.Log("Hit: " + hit.collider.GetComponentInParent<DungeonCell>().name);
+				hit.collider.GetComponentInParent<DungeonCell>().OnPlayerEntered();
 			}
 	}
 }

@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
-  agent: {fileID: 0}
+  agent: {fileID: 298271831820822560}
   walkSpeed: 3.5
   targetMask:
     serializedVersion: 2

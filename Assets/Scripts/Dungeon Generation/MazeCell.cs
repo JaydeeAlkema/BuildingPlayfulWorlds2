@@ -14,6 +14,7 @@ public class MazeCell : MonoBehaviour
 	{
 		room.Add(this);
 		transform.GetChild(0).GetComponent<Renderer>().material = room.Settings.floorMaterial;
+		transform.GetChild(1).GetComponent<Renderer>().material = room.Settings.floorMaterial;
 	}
 
 	public void SetEdge(MazeDirection direction, MazeCellEdge edge)

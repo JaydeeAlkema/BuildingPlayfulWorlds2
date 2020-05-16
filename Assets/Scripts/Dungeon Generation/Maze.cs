@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Maze : MonoBehaviour
 {
 	#region Variables
+
+	[SerializeField] private NavMeshSurface navMeshSurface = default;
 	[SerializeField] private IntVector2 size = default;
 	[SerializeField] private MazeCell cellPrefab = default;
 	[SerializeField] private MazePassage passagePrefab = default;
@@ -33,12 +36,16 @@ public class Maze : MonoBehaviour
 	public IEnumerator Generate()
 	{
 		cells = new MazeCell[size.x, size.z];
+		navMeshSurface.transform.localScale = new Vector3(size.x, 1f, size.z);
 		List<MazeCell> activeCells = new List<MazeCell>();
 		DoFirstGenerationStep(activeCells);
 		while(activeCells.Count > 0)
 		{
 			DoNextGenerationStep(activeCells);
 		}
+
+		yield return StartCoroutine(BakeNavMeshSurfaces());
+
 		for(int i = 0; i < rooms.Count; i++)
 		{
 			rooms[i].Hide();
@@ -46,6 +53,14 @@ public class Maze : MonoBehaviour
 		rooms[0].Show();
 
 		yield return new WaitForEndOfFrame();
+	}
+
+	private IEnumerator BakeNavMeshSurfaces()
+	{
+		Debug.Log("Baking NavMesh!");
+		navMeshSurface.BuildNavMesh();
+		Debug.Log("Baking NavMesh Complete!");
+		yield return null;
 	}
 
 	private void DoFirstGenerationStep(List<MazeCell> activeCells)

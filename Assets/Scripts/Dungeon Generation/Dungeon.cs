@@ -13,6 +13,7 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private DungeonPassage passagePrefab = default;
 	[SerializeField] private DungeonWall wallPrefab = default;
 	[SerializeField] private DungeonDoor doorPrefab = default;
+	[SerializeField] private GameObject enemyPrefab = default;
 	[Space]
 	[SerializeField] [Range(0f, 0.1f)] private float doorProbability = default;
 	[Space]
@@ -45,12 +46,13 @@ public class Dungeon : MonoBehaviour
 		}
 
 		yield return StartCoroutine(BakeNavMeshSurfaces());
+		yield return StartCoroutine(AddEnemiesToRooms());
 
 		for(int i = 0; i < rooms.Count; i++)
 		{
 			rooms[i].Hide();
 		}
-		rooms[0].Show();
+		rooms[0].Show();    // This is the room where the player will be spawned and will always be a "safe" room.
 
 		yield return new WaitForEndOfFrame();
 	}
@@ -169,6 +171,23 @@ public class Dungeon : MonoBehaviour
 		newRoom.Settings = roomSettings[newRoom.SettingsIndex];
 		rooms.Add(newRoom);
 		return newRoom;
+	}
+
+	private IEnumerator AddEnemiesToRooms()
+	{
+		for(int r = 0; r < rooms.Count; r++)
+		{
+			int amountOfEnemiesToSpawn = Random.Range(rooms[r].Settings.minEnemies, rooms[r].Settings.maxEnemies);
+			for(int c = 0; c < amountOfEnemiesToSpawn; c++)
+			{
+				int randCellIndex = Random.Range(0, rooms[r].Cells.Count);
+
+				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity);
+				rooms[r].EnemiesInRoom.Add(newEnemy);
+				rooms[r].Cells[randCellIndex].occupied = true;
+			}
+		}
+		yield return null;
 	}
 	#endregion
 }

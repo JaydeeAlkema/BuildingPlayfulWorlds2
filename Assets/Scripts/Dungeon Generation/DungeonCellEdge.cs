@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-public abstract class MazeCellEdge : MazeCell
+public abstract class DungeonCellEdge : DungeonCell
 {
-	public MazeCell cell, otherCell;
+	public DungeonCell cell, otherCell;
 
-	public MazeDirection direction = default;
+	public DungeonDirection direction = default;
 
-	public virtual void Initialize(MazeCell cell, MazeCell otherCell, MazeDirection direction)
+	public virtual void Initialize(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
 		this.cell = cell;
 		this.otherCell = otherCell;

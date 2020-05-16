@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MazeDoor : MazePassage
+public class DungeonDoor : DungeonPassage
 {
 	public Transform hinge = default;
 
@@ -11,9 +11,9 @@ public class MazeDoor : MazePassage
 	private bool isMirrored;
 	private bool isOpen = false;
 
-	private MazeDoor GetOtherSideOfDoor() => otherCell.GetEdge(direction.GetOpposite()) as MazeDoor;
+	private DungeonDoor GetOtherSideOfDoor() => otherCell.GetEdge(direction.GetOpposite()) as DungeonDoor;
 
-	public override void Initialize(MazeCell primary, MazeCell other, MazeDirection direction)
+	public override void Initialize(DungeonCell primary, DungeonCell other, DungeonDirection direction)
 	{
 		base.Initialize(primary, other, direction);
 		if(GetOtherSideOfDoor() != null)

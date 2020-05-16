@@ -1,45 +1,45 @@
 ﻿using UnityEngine;
 
-public class MazeCell : MonoBehaviour
+public class DungeonCell : MonoBehaviour
 {
 	public IntVector2 coordinates = default;
 	private int initializedEdgeCount = default;
-	public MazeRoom room;
+	public DungeonRoom room;
 
-	public bool IsFullyInitialized => initializedEdgeCount == MazeDirections.Count;
-	private MazeCellEdge[] edges = new MazeCellEdge[MazeDirections.Count];
-	public MazeCellEdge GetEdge(MazeDirection direction) => edges[(int)direction];
+	public bool IsFullyInitialized => initializedEdgeCount == DungeonDirections.Count;
+	private DungeonCellEdge[] edges = new DungeonCellEdge[DungeonDirections.Count];
+	public DungeonCellEdge GetEdge(DungeonDirection direction) => edges[(int)direction];
 
-	public void Initialize(MazeRoom room)
+	public void Initialize(DungeonRoom room)
 	{
 		room.Add(this);
 		transform.GetChild(0).GetComponent<Renderer>().material = room.Settings.floorMaterial;
 		transform.GetChild(1).GetComponent<Renderer>().material = room.Settings.floorMaterial;
 	}
 
-	public void SetEdge(MazeDirection direction, MazeCellEdge edge)
+	public void SetEdge(DungeonDirection direction, DungeonCellEdge edge)
 	{
 		edges[(int)direction] = edge;
 		initializedEdgeCount += 1;
 	}
 
-	public MazeDirection RandomUninitializedDirection
+	public DungeonDirection RandomUninitializedDirection
 	{
 		get
 		{
-			int skips = Random.Range(0, MazeDirections.Count - initializedEdgeCount);
-			for(int i = 0; i < MazeDirections.Count; i++)
+			int skips = Random.Range(0, DungeonDirections.Count - initializedEdgeCount);
+			for(int i = 0; i < DungeonDirections.Count; i++)
 			{
 				if(edges[i] == null)
 				{
 					if(skips == 0)
 					{
-						return (MazeDirection)i;
+						return (DungeonDirection)i;
 					}
 					skips -= 1;
 				}
 			}
-			throw new System.InvalidOperationException("MazeCell has no uninitialized directions left.");
+			throw new System.InvalidOperationException("DungeonCell has no uninitialized directions left.");
 		}
 	}
 

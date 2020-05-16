@@ -3,31 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Maze : MonoBehaviour
+public class Dungeon : MonoBehaviour
 {
 	#region Variables
 
 	[SerializeField] private NavMeshSurface navMeshSurface = default;
 	[SerializeField] private IntVector2 size = default;
-	[SerializeField] private MazeCell cellPrefab = default;
-	[SerializeField] private MazePassage passagePrefab = default;
-	[SerializeField] private MazeWall wallPrefab = default;
-	[SerializeField] private MazeDoor doorPrefab = default;
+	[SerializeField] private DungeonCell cellPrefab = default;
+	[SerializeField] private DungeonPassage passagePrefab = default;
+	[SerializeField] private DungeonWall wallPrefab = default;
+	[SerializeField] private DungeonDoor doorPrefab = default;
 	[Space]
 	[SerializeField] [Range(0f, 0.1f)] private float doorProbability = default;
 	[Space]
-	[SerializeField] private MazeRoomSettings[] roomSettings = default;
+	[SerializeField] private DungeonRoomSettings[] roomSettings = default;
 	[Space]
-	[SerializeField] private MazeCell[,] cells = default;
-	[SerializeField] private List<MazeRoom> rooms = new List<MazeRoom>();
+	[SerializeField] private DungeonCell[,] cells = default;
+	[SerializeField] private List<DungeonRoom> rooms = new List<DungeonRoom>();
 
 	#endregion
 
 	#region Methods & Properties
 	public IntVector2 GetRandomCoordinates() => new IntVector2(Random.Range(0, size.x), Random.Range(0, size.z));
 	public bool ContainsCoordinates(IntVector2 coordinate) => coordinate.x >= 0 && coordinate.x < size.x && coordinate.z >= 0 && coordinate.z < size.z;
-	public MazeCell GetCell(IntVector2 coordinates) => cells[coordinates.x, coordinates.z];
-	public List<MazeRoom> Rooms { get => rooms; set => rooms = value; }
+	public DungeonCell GetCell(IntVector2 coordinates) => cells[coordinates.x, coordinates.z];
+	public List<DungeonRoom> Rooms { get => rooms; set => rooms = value; }
 	public IntVector2 Size { get => size; set => size = value; }
 	public float DoorProbability { get => doorProbability; set => doorProbability = value; }
 	#endregion
@@ -35,9 +35,9 @@ public class Maze : MonoBehaviour
 	#region Functions
 	public IEnumerator Generate()
 	{
-		cells = new MazeCell[size.x, size.z];
+		cells = new DungeonCell[size.x, size.z];
 		navMeshSurface.transform.localScale = new Vector3(size.x, 1f, size.z);
-		List<MazeCell> activeCells = new List<MazeCell>();
+		List<DungeonCell> activeCells = new List<DungeonCell>();
 		DoFirstGenerationStep(activeCells);
 		while(activeCells.Count > 0)
 		{
@@ -63,27 +63,27 @@ public class Maze : MonoBehaviour
 		yield return null;
 	}
 
-	private void DoFirstGenerationStep(List<MazeCell> activeCells)
+	private void DoFirstGenerationStep(List<DungeonCell> activeCells)
 	{
-		MazeCell newCell = CreateCell(GetRandomCoordinates());
+		DungeonCell newCell = CreateCell(GetRandomCoordinates());
 		newCell.Initialize(CreateRoom(-1));
 		activeCells.Add(newCell);
 	}
 
-	private void DoNextGenerationStep(List<MazeCell> activeCells)
+	private void DoNextGenerationStep(List<DungeonCell> activeCells)
 	{
 		int currentIndex = activeCells.Count - 1;
-		MazeCell currentCell = activeCells[currentIndex];
+		DungeonCell currentCell = activeCells[currentIndex];
 		if(currentCell.IsFullyInitialized)
 		{
 			activeCells.RemoveAt(currentIndex);
 			return;
 		}
-		MazeDirection direction = currentCell.RandomUninitializedDirection;
+		DungeonDirection direction = currentCell.RandomUninitializedDirection;
 		IntVector2 coordinates = currentCell.coordinates + direction.ToIntVector2();
 		if(ContainsCoordinates(coordinates))
 		{
-			MazeCell neighbor = GetCell(coordinates);
+			DungeonCell neighbor = GetCell(coordinates);
 			if(neighbor == null)
 			{
 				neighbor = CreateCell(coordinates);
@@ -105,24 +105,24 @@ public class Maze : MonoBehaviour
 		}
 	}
 
-	private MazeCell CreateCell(IntVector2 coordinates)
+	private DungeonCell CreateCell(IntVector2 coordinates)
 	{
-		MazeCell newCell = Instantiate(cellPrefab) as MazeCell;
+		DungeonCell newCell = Instantiate(cellPrefab) as DungeonCell;
 		cells[coordinates.x, coordinates.z] = newCell;
 		newCell.coordinates = coordinates;
-		newCell.name = "Maze Cell " + coordinates.x + ", " + coordinates.z;
+		newCell.name = "Dungeon Cell " + coordinates.x + ", " + coordinates.z;
 		newCell.transform.parent = transform;
 		newCell.transform.localPosition = new Vector3(coordinates.x - size.x * 0.5f + 0.5f, 0f, coordinates.z - size.z * 0.5f + 0.5f);
 		return newCell;
 	}
 
-	private void CreatePassage(MazeCell cell, MazeCell otherCell, MazeDirection direction)
+	private void CreatePassage(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
-		MazePassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
-		MazePassage passage = Instantiate(prefab) as MazePassage;
+		DungeonPassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
+		DungeonPassage passage = Instantiate(prefab) as DungeonPassage;
 		passage.Initialize(cell, otherCell, direction);
-		passage = Instantiate(prefab) as MazePassage;
-		if(passage is MazeDoor)
+		passage = Instantiate(prefab) as DungeonPassage;
+		if(passage is DungeonDoor)
 		{
 			otherCell.Initialize(CreateRoom(cell.room.SettingsIndex));
 		}
@@ -133,34 +133,34 @@ public class Maze : MonoBehaviour
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
 	}
 
-	private void CreatePassageInSameRoom(MazeCell cell, MazeCell otherCell, MazeDirection direction)
+	private void CreatePassageInSameRoom(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
-		MazePassage passage = Instantiate(passagePrefab) as MazePassage;
+		DungeonPassage passage = Instantiate(passagePrefab) as DungeonPassage;
 		passage.Initialize(cell, otherCell, direction);
-		passage = Instantiate(passagePrefab) as MazePassage;
+		passage = Instantiate(passagePrefab) as DungeonPassage;
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
 		if(cell.room != otherCell.room)
 		{
-			MazeRoom roomToAssimilate = otherCell.room;
+			DungeonRoom roomToAssimilate = otherCell.room;
 			cell.room.Assimilate(roomToAssimilate);
 			Destroy(roomToAssimilate);
 		}
 	}
 
-	private void CreateWall(MazeCell cell, MazeCell otherCell, MazeDirection direction)
+	private void CreateWall(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
-		MazeWall wall = Instantiate(wallPrefab) as MazeWall;
+		DungeonWall wall = Instantiate(wallPrefab) as DungeonWall;
 		wall.Initialize(cell, otherCell, direction);
 		if(otherCell != null)
 		{
-			wall = Instantiate(wallPrefab) as MazeWall;
+			wall = Instantiate(wallPrefab) as DungeonWall;
 			wall.Initialize(otherCell, cell, direction.GetOpposite());
 		}
 	}
 
-	private MazeRoom CreateRoom(int indexToExclude)
+	private DungeonRoom CreateRoom(int indexToExclude)
 	{
-		MazeRoom newRoom = ScriptableObject.CreateInstance<MazeRoom>();
+		DungeonRoom newRoom = ScriptableObject.CreateInstance<DungeonRoom>();
 		newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
 		if(newRoom.SettingsIndex == indexToExclude)
 		{

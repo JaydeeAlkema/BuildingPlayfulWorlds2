@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class MazeRoomSettings
+public class DungeonRoomSettings
 {
 	public Material floorMaterial;
 }

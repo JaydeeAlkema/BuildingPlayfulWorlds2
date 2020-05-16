@@ -31,36 +31,11 @@ public class EnemyBehaviour : MonoBehaviour
 	#region Monobehaviour Callbacks
 	private void Start()
 	{
-		StartCoroutine(CheckForStateChange());
+		OnStateChangeEvent();
 	}
 	#endregion
 
 	#region Functions
-	private IEnumerator CheckForStateChange()
-	{
-		while(true)
-		{
-			if(target == null)
-			{
-				state = EnemyState.Idle;
-				OnStateChangeEvent();
-			}
-
-			if(target != null)
-			{
-				state = EnemyState.Chasing;
-				OnStateChangeEvent();
-			}
-
-			if(target != null && Vector3.Distance(transform.position, target.position) < targetInteractionRadius)
-			{
-				state = EnemyState.Attacking;
-				OnStateChangeEvent();
-			}
-			yield return null;
-		}
-	}
-
 	private void OnStateChangeEvent()
 	{
 		switch(state)
@@ -81,32 +56,39 @@ public class EnemyBehaviour : MonoBehaviour
 
 	private IEnumerator SearchForTarget()
 	{
-		while(state == EnemyState.Chasing)
+		while(true)
 		{
-			target = GameManager.Instance.PlayerInstance.transform;
+			if(!target)
+			{
+				target = GameManager.Instance.PlayerInstance.transform;
+			}
+			else
+				state = EnemyState.Chasing;
+
+			OnStateChangeEvent();
 			yield return null;
 		}
-		yield return null;
 	}
 
 	private IEnumerator MoveToTarget()
 	{
-		while(state == EnemyState.Chasing)
+		while(true)
 		{
 			agent.destination = target.position;
+
+			OnStateChangeEvent();
 			yield return new WaitForSeconds(targetDestinationUpdateInterval);
 		}
-		yield return null;
 	}
 
 	private IEnumerator AttackTarget()
 	{
-		while(state == EnemyState.Chasing)
+		while(true)
 		{
 
+			OnStateChangeEvent();
 			yield return null;
 		}
-		yield return null;
 	}
 	#endregion
 

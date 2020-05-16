@@ -5,6 +5,7 @@ public class DungeonCell : MonoBehaviour
 	public IntVector2 coordinates = default;
 	private int initializedEdgeCount = default;
 	public DungeonRoom room;
+	public bool occupied = false;
 
 	public bool IsFullyInitialized => initializedEdgeCount == DungeonDirections.Count;
 	private DungeonCellEdge[] edges = new DungeonCellEdge[DungeonDirections.Count];

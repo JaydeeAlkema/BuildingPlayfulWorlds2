@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
 	#region Variables
+	private static GameManager instance = null;
+
 	[SerializeField] private Dungeon dungeonPrefab = default;
 	[SerializeField] private GameObject playerPrefab = default;
 	[SerializeField] private DungeonCell cellToSpawnPlayerOn = default;
@@ -12,7 +14,19 @@ public class GameManager : MonoBehaviour
 	private GameObject playerInstance;
 	#endregion
 
+	#region Properties
+	public static GameManager Instance { get => instance; set => instance = value; }
+
+	public Dungeon DungeonInstance { get => dungeonInstance; set => dungeonInstance = value; }
+	public GameObject PlayerInstance { get => playerInstance; set => playerInstance = value; }
+	#endregion
+
 	#region Monobehaviour Callbacks
+	private void Awake()
+	{
+		if(!instance || instance != this) instance = this;
+	}
+
 	private void Start()
 	{
 		StartCoroutine(BeginGame());
@@ -37,14 +51,10 @@ public class GameManager : MonoBehaviour
 	#region Private Functions
 	private IEnumerator BeginGame()
 	{
-		IntVector2 newGridSize = new IntVector2(PlayerPrefs.GetInt("GridSizeX"), PlayerPrefs.GetInt("GridSizeY"));
-
 		playerInstance = Instantiate(playerPrefab) as GameObject;
 		playerInstance.SetActive(false);
 
 		dungeonInstance = Instantiate(dungeonPrefab) as Dungeon;
-		dungeonInstance.Size = newGridSize;
-		dungeonInstance.DoorProbability = PlayerPrefs.GetFloat("DoorProbability");
 		yield return StartCoroutine(dungeonInstance.Generate());
 		cellToSpawnPlayerOn = dungeonInstance.Rooms[0].Cells[Random.Range(0, dungeonInstance.Rooms[0].Cells.Count)];
 

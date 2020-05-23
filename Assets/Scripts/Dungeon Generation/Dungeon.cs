@@ -6,13 +6,13 @@ using UnityEngine.AI;
 public class Dungeon : MonoBehaviour
 {
 	#region Variables
-
 	[SerializeField] private NavMeshSurface navMeshSurface = default;
 	[SerializeField] private IntVector2 size = default;
 	[SerializeField] private DungeonCell cellPrefab = default;
 	[SerializeField] private DungeonPassage passagePrefab = default;
 	[SerializeField] private DungeonWall wallPrefab = default;
 	[SerializeField] private DungeonDoor doorPrefab = default;
+	[SerializeField] private GameObject enemyPrefab = default;
 	[Space]
 	[SerializeField] [Range(0f, 0.1f)] private float doorProbability = default;
 	[Space]
@@ -21,6 +21,7 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private DungeonCell[,] cells = default;
 	[SerializeField] private List<DungeonRoom> rooms = new List<DungeonRoom>();
 
+	private int roomIndex = 0;
 	#endregion
 
 	#region Methods & Properties
@@ -45,12 +46,14 @@ public class Dungeon : MonoBehaviour
 		}
 
 		yield return StartCoroutine(BakeNavMeshSurfaces());
+		yield return StartCoroutine(AddEnemiesToRooms());
 
 		for(int i = 0; i < rooms.Count; i++)
 		{
 			rooms[i].Hide();
 		}
-		rooms[0].Show();
+		rooms[0].Show();    // This is the room where the player will be spawned and will always be a "safe" room.
+		rooms[0].Settings = roomSettings[0];
 
 		yield return new WaitForEndOfFrame();
 	}
@@ -161,14 +164,39 @@ public class Dungeon : MonoBehaviour
 	private DungeonRoom CreateRoom(int indexToExclude)
 	{
 		DungeonRoom newRoom = ScriptableObject.CreateInstance<DungeonRoom>();
-		newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
+		if(roomIndex == 0) newRoom.SettingsIndex = 0;
+		else newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
+
 		if(newRoom.SettingsIndex == indexToExclude)
 		{
 			newRoom.SettingsIndex = (newRoom.SettingsIndex + 1) % roomSettings.Length;
 		}
 		newRoom.Settings = roomSettings[newRoom.SettingsIndex];
 		rooms.Add(newRoom);
+
+		roomIndex++;
 		return newRoom;
+	}
+
+	private IEnumerator AddEnemiesToRooms()
+	{
+		for(int r = 0; r < rooms.Count; r++)
+		{
+			int amountOfEnemiesToSpawn = Random.Range(rooms[r].Settings.minEnemies, rooms[r].Settings.maxEnemies);
+			for(int c = 0; c < amountOfEnemiesToSpawn; c++)
+			{
+				int randCellIndex = Random.Range(0, rooms[r].Cells.Count);
+				while(rooms[r].Cells[randCellIndex].occupied)
+				{
+					randCellIndex = Random.Range(0, rooms[r].Cells.Count);
+				}
+
+				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity);
+				rooms[r].EnemiesInRoom.Add(newEnemy);
+				rooms[r].Cells[randCellIndex].occupied = true;
+			}
+		}
+		yield return null;
 	}
 	#endregion
 }

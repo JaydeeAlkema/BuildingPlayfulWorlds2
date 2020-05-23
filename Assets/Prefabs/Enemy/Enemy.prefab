@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 956463114487364729}
   - component: {fileID: 956463114487364728}
   - component: {fileID: 956463114487364711}
-  - component: {fileID: 956463114487364710}
   - component: {fileID: 298271831820822560}
   - component: {fileID: -7608065986186554655}
   m_Layer: 0
@@ -82,20 +81,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &956463114487364710
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 956463114487364709}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &298271831820822560
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -117,7 +102,7 @@ NavMeshAgent:
   m_Height: 1.95
   m_BaseOffset: 0.95
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!114 &-7608065986186554655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,11 +117,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   agent: {fileID: 298271831820822560}
-  walkSpeed: 3.5
+  walkSpeed: 1
   targetMask:
     serializedVersion: 2
     m_Bits: 0
   target: {fileID: 0}
   targetDestinationUpdateInterval: 0.1
+  targetDetectionCheckInterval: 0.1
+  targetInteractionInterval: 1
   targetDetectionRadius: 15
   targetInteractionRadius: 1.5

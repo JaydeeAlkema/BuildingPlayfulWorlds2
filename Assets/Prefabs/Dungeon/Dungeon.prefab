@@ -54,7 +54,7 @@ MonoBehaviour:
   doorPrefab: {fileID: 11400002, guid: ddd2858d08f2e45f3b4b479b51caf822, type: 3}
   enemyPrefab: {fileID: 956463114487364709, guid: 4df6db7379b5bfd40922dad8a9a5a399,
     type: 3}
-  doorProbability: 0.01
+  doorProbability: 0.02
   roomSettings:
   - floorMaterial: {fileID: 2100000, guid: 30c54df05c95d6849a2c8293c74ad4f6, type: 2}
     minEnemies: 0

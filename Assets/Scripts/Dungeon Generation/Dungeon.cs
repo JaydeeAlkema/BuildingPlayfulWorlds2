@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class Dungeon : MonoBehaviour
 {
 	#region Variables
-
 	[SerializeField] private NavMeshSurface navMeshSurface = default;
 	[SerializeField] private IntVector2 size = default;
 	[SerializeField] private DungeonCell cellPrefab = default;
@@ -22,6 +21,7 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private DungeonCell[,] cells = default;
 	[SerializeField] private List<DungeonRoom> rooms = new List<DungeonRoom>();
 
+	private int roomIndex = 0;
 	#endregion
 
 	#region Methods & Properties
@@ -53,6 +53,7 @@ public class Dungeon : MonoBehaviour
 			rooms[i].Hide();
 		}
 		rooms[0].Show();    // This is the room where the player will be spawned and will always be a "safe" room.
+		rooms[0].Settings = roomSettings[0];
 
 		yield return new WaitForEndOfFrame();
 	}
@@ -163,13 +164,17 @@ public class Dungeon : MonoBehaviour
 	private DungeonRoom CreateRoom(int indexToExclude)
 	{
 		DungeonRoom newRoom = ScriptableObject.CreateInstance<DungeonRoom>();
-		newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
+		if(roomIndex == 0) newRoom.SettingsIndex = 0;
+		else newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
+
 		if(newRoom.SettingsIndex == indexToExclude)
 		{
 			newRoom.SettingsIndex = (newRoom.SettingsIndex + 1) % roomSettings.Length;
 		}
 		newRoom.Settings = roomSettings[newRoom.SettingsIndex];
 		rooms.Add(newRoom);
+
+		roomIndex++;
 		return newRoom;
 	}
 

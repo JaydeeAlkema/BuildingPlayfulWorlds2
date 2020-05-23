@@ -20,6 +20,9 @@ public class EnemyBehaviour : MonoBehaviour
 	[SerializeField] private LayerMask targetMask = default;                        // Which layers to check for target.
 	[SerializeField] private Transform target = null;                               // Reference to the target transform.
 	[SerializeField] private float targetDestinationUpdateInterval = 0.1f;          // How often the destination will be set for the AI.
+	[SerializeField] private float targetDetectionCheckInterval = 0.1f;             // How much time between target detection.
+	[SerializeField] private float targetInteractionInterval = 1f;                  // How much time between attacks.
+
 	[SerializeField] private float targetDetectionRadius = 15f;                     // How far the Enemy can "See".
 	[SerializeField] private float targetInteractionRadius = 1f;                    // How far the Enemy can "Interact" with the target.
 	#endregion
@@ -31,42 +34,29 @@ public class EnemyBehaviour : MonoBehaviour
 	#region Monobehaviour Callbacks
 	private void Start()
 	{
-		OnStateChangeEvent();
+		agent.speed = walkSpeed;
+	}
+
+	private void OnEnable()
+	{
+		StartCoroutine(SearchForTarget());
+		StartCoroutine(MoveToTarget());
+		StartCoroutine(AttackTarget());
 	}
 	#endregion
 
 	#region Functions
-	private void OnStateChangeEvent()
-	{
-		switch(state)
-		{
-			case EnemyState.Idle:
-				StartCoroutine(SearchForTarget());
-				break;
-			case EnemyState.Chasing:
-				StartCoroutine(MoveToTarget());
-				break;
-			case EnemyState.Attacking:
-				StartCoroutine(AttackTarget());
-				break;
-			default:
-				break;
-		}
-	}
-
 	private IEnumerator SearchForTarget()
 	{
 		while(true)
 		{
-			if(!target)
+			if(state == EnemyState.Idle)
 			{
-				target = GameManager.Instance.PlayerInstance.transform;
+				if(!target) target = GameManager.Instance.PlayerInstance.transform;
+				else state = EnemyState.Chasing;
+				Debug.Log("Searching for Target");
 			}
-			else
-				state = EnemyState.Chasing;
-
-			OnStateChangeEvent();
-			yield return null;
+			yield return new WaitForSeconds(targetDetectionCheckInterval);
 		}
 	}
 
@@ -74,9 +64,13 @@ public class EnemyBehaviour : MonoBehaviour
 	{
 		while(true)
 		{
-			agent.destination = target.position;
+			if(state == EnemyState.Chasing)
+			{
+				agent.destination = target.position;
+				Debug.Log("Moving Towards Target");
 
-			OnStateChangeEvent();
+				if(Vector3.Distance(transform.position, target.position) < targetInteractionRadius) state = EnemyState.Attacking;
+			}
 			yield return new WaitForSeconds(targetDestinationUpdateInterval);
 		}
 	}
@@ -85,9 +79,12 @@ public class EnemyBehaviour : MonoBehaviour
 	{
 		while(true)
 		{
-
-			OnStateChangeEvent();
-			yield return null;
+			if(state == EnemyState.Attacking)
+			{
+				Debug.Log("Attacking Target");
+				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
+			}
+			yield return new WaitForSeconds(targetInteractionInterval);
 		}
 	}
 	#endregion

@@ -54,7 +54,7 @@ public class EnemyBehaviour : MonoBehaviour
 			{
 				if(!target) target = GameManager.Instance.PlayerInstance.transform;
 				else state = EnemyState.Chasing;
-				Debug.Log("Searching for Target");
+				Debug.Log("[" + gameObject.name + "]" + " Searching for Target");
 			}
 			yield return new WaitForSeconds(targetDetectionCheckInterval);
 		}
@@ -67,7 +67,7 @@ public class EnemyBehaviour : MonoBehaviour
 			if(state == EnemyState.Chasing)
 			{
 				agent.destination = target.position;
-				Debug.Log("Moving Towards Target");
+				Debug.Log("[" + gameObject.name + "]" + " Moving Towards Target");
 
 				if(Vector3.Distance(transform.position, target.position) < targetInteractionRadius) state = EnemyState.Attacking;
 			}
@@ -81,7 +81,7 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			if(state == EnemyState.Attacking)
 			{
-				Debug.Log("Attacking Target");
+				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
 			}
 			yield return new WaitForSeconds(targetInteractionInterval);

@@ -186,10 +186,12 @@ public class Dungeon : MonoBehaviour
 			for(int c = 0; c < amountOfEnemiesToSpawn; c++)
 			{
 				int randCellIndex = Random.Range(0, rooms[r].Cells.Count);
-				while(rooms[r].Cells[randCellIndex].occupied)
-				{
-					randCellIndex = Random.Range(0, rooms[r].Cells.Count);
-				}
+
+				// This seems to work 1 / 10th of the time
+				//while(rooms[r].Cells[randCellIndex].occupied)
+				//{
+				//	randCellIndex = Random.Range(0, rooms[r].Cells.Count);
+				//}
 
 				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity);
 				rooms[r].EnemiesInRoom.Add(newEnemy);

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class PlayerMovementBehaviour : MonoBehaviour
 {
+	[SerializeField] private CharacterController charController = default;
 	[SerializeField] private string horizontalInputName = default;
 	[SerializeField] private string verticalInputName = default;
 	[Space]
@@ -21,7 +22,6 @@ public class PlayerMovementBehaviour : MonoBehaviour
 	[Space]
 	[SerializeField] private DungeonCell cellUnderneathPlayer = default;
 	[SerializeField] private DungeonCell previousCellUnderneathPlayer = default;
-	private CharacterController charController = default;
 
 	private void Awake()
 	{
@@ -100,6 +100,7 @@ public class PlayerMovementBehaviour : MonoBehaviour
 			if(hit.collider.GetComponentInParent<DungeonCell>())
 			{
 				//Debug.Log("Hit: " + hit.collider.GetComponentInParent<DungeonCell>().name);
+				cellUnderneathPlayer = hit.collider.GetComponentInParent<DungeonCell>();
 				hit.collider.GetComponentInParent<DungeonCell>().OnPlayerEntered();
 			}
 	}

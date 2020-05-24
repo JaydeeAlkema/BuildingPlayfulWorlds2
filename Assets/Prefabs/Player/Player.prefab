@@ -127,10 +127,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c1ce19429aa5646873eeb534c29506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charController: {fileID: 2677591326824086564}
   horizontalInputName: Horizontal
   verticalInputName: Vertical
   walkSpeed: 2
-  runSpeed: 3.5
+  runSpeed: 5
   runBuildUpSpeed: 5
   runKey: 304
   slopeForce: 100
@@ -221,7 +222,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 0.025
   far clip plane: 1000
   field of view: 75
   orthographic: 0

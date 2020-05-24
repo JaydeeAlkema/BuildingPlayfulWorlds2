@@ -28,8 +28,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.3, y: 0.5, z: -0.025}
-  m_LocalScale: {x: 0.6, y: 1, z: 0.05}
+  m_LocalPosition: {x: 0.25, y: 0.5, z: 0}
+  m_LocalScale: {x: 0.5, y: 1, z: 0.05}
   m_Children: []
   m_Father: {fileID: 400004}
   m_RootOrder: 0
@@ -134,7 +134,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3, y: 0, z: 0.5}
+  m_LocalPosition: {x: -0.25, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400000}
@@ -169,8 +169,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 0.5, z: 0.475}
-  m_LocalScale: {x: 0.2, y: 1, z: 0.05}
+  m_LocalPosition: {x: 0.375, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.25, y: 1, z: 0.05}
   m_Children: []
   m_Father: {fileID: 400014}
   m_RootOrder: 1
@@ -262,8 +262,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.4, y: 0.5, z: 0.475}
-  m_LocalScale: {x: 0.2, y: 1, z: 0.05}
+  m_LocalPosition: {x: -0.375, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.25, y: 1, z: 0.05}
   m_Children: []
   m_Father: {fileID: 400014}
   m_RootOrder: 0
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 400014}
   - component: {fileID: 11400002}
   m_Layer: 0
-  m_Name: Maze Door
+  m_Name: Dungeon Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -378,6 +378,7 @@ MonoBehaviour:
     x: 0
     z: 0
   room: {fileID: 0}
+  occupied: 0
   cell: {fileID: 0}
   otherCell: {fileID: 0}
   direction: 0
@@ -409,8 +410,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 371672336645243771}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.503, y: 0.5, z: -0.025}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalPosition: {x: 0.414, y: 0.48, z: 0}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.1}
   m_Children: []
   m_Father: {fileID: 400004}
   m_RootOrder: 1

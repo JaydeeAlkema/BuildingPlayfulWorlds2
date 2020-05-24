@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 400002}
   - component: {fileID: 11400000}
   m_Layer: 0
-  m_Name: Maze Cell
+  m_Name: Dungeon Cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28,8 +28,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 8658879627558376102}
   - {fileID: 7766822648099134354}
+  - {fileID: 8658879627558376102}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -49,6 +49,7 @@ MonoBehaviour:
     x: 0
     z: 0
   room: {fileID: 0}
+  occupied: 0
 --- !u!1 &2324700328192129849
 GameObject:
   m_ObjectHideFlags: 0
@@ -80,7 +81,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400002}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 270, y: 0, z: 0}
 --- !u!33 &8820321208880269039
 MeshFilter:
@@ -174,7 +175,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400002}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &3316637940077782790
 MeshFilter:

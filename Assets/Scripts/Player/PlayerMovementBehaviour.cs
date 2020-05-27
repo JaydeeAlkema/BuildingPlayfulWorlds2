@@ -1,27 +1,26 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class PlayerMovementBehaviour : MonoBehaviour
+public class PlayerMovementBehaviour : MonoBehaviour, IDamageable
 {
-	[SerializeField] private CharacterController charController = default;
-	[SerializeField] private string horizontalInputName = default;
-	[SerializeField] private string verticalInputName = default;
+	[SerializeField] private float health = default;										// Health of the player
 	[Space]
-	private float movementSpeed = default;
-	[SerializeField] private float walkSpeed = default;
-	[SerializeField] private float runSpeed = default;
-	[SerializeField] private float runBuildUpSpeed = default;
-	[SerializeField] private KeyCode runKey = default;
-	[SerializeField] private float slopeForce = default;
-	[SerializeField] private float slopeForceRayLength = default;
+	[SerializeField] private CharacterController charController = default;					// Reference to the Character Controller component.
+	[SerializeField] private string horizontalInputName = default;							// Name of the Horizontal Input Axis name.
+	[SerializeField] private string verticalInputName = default;                            // Name of the Vertical Input Axis name.
 	[Space]
-	[SerializeField] private bool isJumping = false;
-	[SerializeField] private AnimationCurve jumpfallOff = default;
-	[SerializeField] private float jumpMultiplier = default;
-	[SerializeField] private KeyCode jumpKey = default;
+	private float movementSpeed = default;													// Final movement speed depending on input.
+	[SerializeField] private float walkSpeed = default;                                     // Base Walking speed.
+	[SerializeField] private float runSpeed = default;                                      // Base Running speed.					
+	[SerializeField] private float runBuildUpSpeed = default;								// How fast the player transitions from Walking to running.
+	[SerializeField] private KeyCode runKey = default;										// Which key to press to start running.
+	[SerializeField] private float slopeForce = default;									// How hard the player gets pushed downwards on a slope.
+	[SerializeField] private float slopeForceRayLength = default;							// How far to check for a slope underneath a player.
 	[Space]
-	[SerializeField] private DungeonCell cellUnderneathPlayer = default;
-	[SerializeField] private DungeonCell previousCellUnderneathPlayer = default;
+	[SerializeField] private bool isJumping = false;										// If the player is jumping or not.
+	[SerializeField] private AnimationCurve jumpfallOff = default;							// What curve to follow when falling downwards.
+	[SerializeField] private float jumpMultiplier = default;								// How "hard" the player gets pushed upwards.
+	[SerializeField] private KeyCode jumpKey = default;										// Which button to press to start jumping.
 
 	private void Awake()
 	{
@@ -99,9 +98,9 @@ public class PlayerMovementBehaviour : MonoBehaviour
 		if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, charController.height / 2f * slopeForceRayLength))
 			if(hit.collider.GetComponentInParent<DungeonCell>())
 			{
-				//Debug.Log("Hit: " + hit.collider.GetComponentInParent<DungeonCell>().name);
-				cellUnderneathPlayer = hit.collider.GetComponentInParent<DungeonCell>();
 				hit.collider.GetComponentInParent<DungeonCell>().OnPlayerEntered();
 			}
 	}
+
+	void IDamageable.Damage(float damage) => health -= damage;
 }

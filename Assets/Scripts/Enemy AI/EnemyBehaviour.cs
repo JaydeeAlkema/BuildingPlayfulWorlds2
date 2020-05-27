@@ -9,11 +9,14 @@ public enum EnemyState
 	Attacking
 }
 
-public class EnemyBehaviour : MonoBehaviour
+public class EnemyBehaviour : MonoBehaviour, IDamageable
 {
 	#region Variables
+	[SerializeField] private float health = default;                                // How much health the enemy has.
+	[Space]
 	[SerializeField] private EnemyState state = EnemyState.Idle;                    // State of the Enemy.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the Enemy Gameobject.
+	[SerializeField] private MeshRenderer renderer = default;                       // Reference to the Mesh Renderer component.
 	[Header("Movement Properties")]
 	[SerializeField] private float walkSpeed = 3.5f;                                // Walking speed of the Enemy.
 	[Header("Targeting Properties")]
@@ -25,6 +28,10 @@ public class EnemyBehaviour : MonoBehaviour
 
 	[SerializeField] private float targetDetectionRadius = 15f;                     // How far the Enemy can "See".
 	[SerializeField] private float targetInteractionRadius = 1f;                    // How far the Enemy can "Interact" with the target.
+	[Header("Debugging Materials")]
+	[SerializeField] private Material idleMat = default;                            // Which Material to show when Idle.
+	[SerializeField] private Material chasingMat = default;                         // Which Material to show when Chasing.
+	[SerializeField] private Material attackingMat = default;                       // Which Material to show when Attacking.
 	#endregion
 
 	#region Properties
@@ -52,6 +59,8 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			if(state == EnemyState.Idle)
 			{
+				agent.isStopped = false;
+				renderer.material = idleMat;
 				if(!target) target = GameManager.Instance.PlayerInstance.transform;
 				else state = EnemyState.Chasing;
 				Debug.Log("[" + gameObject.name + "]" + " Searching for Target");
@@ -66,6 +75,8 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			if(state == EnemyState.Chasing)
 			{
+				agent.isStopped = false;
+				renderer.material = chasingMat;
 				agent.destination = target.position;
 				Debug.Log("[" + gameObject.name + "]" + " Moving Towards Target");
 
@@ -81,6 +92,8 @@ public class EnemyBehaviour : MonoBehaviour
 		{
 			if(state == EnemyState.Attacking)
 			{
+				agent.isStopped = true;
+				renderer.material = attackingMat;
 				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
 			}
@@ -98,5 +111,7 @@ public class EnemyBehaviour : MonoBehaviour
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.position, targetInteractionRadius * transform.localScale.x);
 	}
+
+	void IDamageable.Damage(float damage) => health -= damage;
 	#endregion
 }

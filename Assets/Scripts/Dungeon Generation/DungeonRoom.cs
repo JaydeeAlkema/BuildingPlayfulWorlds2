@@ -39,7 +39,8 @@ public class DungeonRoom : ScriptableObject
 		}
 		for(int e = 0; e < enemiesInRoom.Count; e++)
 		{
-			enemiesInRoom[e].SetActive(false);
+			if(enemiesInRoom[e] != null)
+				enemiesInRoom[e].SetActive(false);
 		}
 	}
 
@@ -51,7 +52,8 @@ public class DungeonRoom : ScriptableObject
 		}
 		for(int e = 0; e < enemiesInRoom.Count; e++)
 		{
-			enemiesInRoom[e].SetActive(true);
+			if(enemiesInRoom[e] != null)
+				enemiesInRoom[e].SetActive(true);
 		}
 	}
 }

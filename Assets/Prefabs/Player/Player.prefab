@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c1ce19429aa5646873eeb534c29506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 100
   charController: {fileID: 2677591326824086564}
   horizontalInputName: Horizontal
   verticalInputName: Vertical
@@ -163,8 +164,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   jumpMultiplier: 1
   jumpKey: 32
-  cellUnderneathPlayer: {fileID: 0}
-  previousCellUnderneathPlayer: {fileID: 0}
 --- !u!1 &8625150953803067223
 GameObject:
   m_ObjectHideFlags: 0

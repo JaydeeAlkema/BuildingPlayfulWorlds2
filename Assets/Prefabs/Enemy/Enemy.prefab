@@ -115,6 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91459bd804abd8c4dab3b9095e995144, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 100
+  damage: 10
   state: 0
   agent: {fileID: 298271831820822560}
   renderer: {fileID: 956463114487364711}

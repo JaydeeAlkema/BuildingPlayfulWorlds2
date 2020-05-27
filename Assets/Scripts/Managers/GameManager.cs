@@ -55,6 +55,11 @@ public class GameManager : MonoBehaviour
 			playerManaImage.fillAmount = playerInstance.GetComponent<PlayerBehaviour>().Mana / playerInstance.GetComponent<PlayerBehaviour>().MaxMana;
 		}
 
+		if(playerInstance.GetComponent<PlayerBehaviour>().Health <= 0)
+		{
+			RestartGame();
+		}
+
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			RestartGame();

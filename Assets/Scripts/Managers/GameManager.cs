@@ -1,14 +1,28 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public enum GameState
+{
+	Active,
+	Paused,
+	GameOver
+}
+
 public class GameManager : MonoBehaviour
 {
 	#region Variables
 	private static GameManager instance = null;
 
+	[SerializeField] private GameState gameState = GameState.Active;                // The state of the game.
+	[Space]
 	[SerializeField] private Dungeon dungeonPrefab = default;
 	[SerializeField] private GameObject playerPrefab = default;
 	[SerializeField] private DungeonCell cellToSpawnPlayerOn = default;
+	[Space]
+	[SerializeField] private Image playerHealthImage = default;                                   // Reference to the Health UI Image Component.
+	[SerializeField] private Image playerManaImage = default;                                     // Reference to the Mana UI Image Component.
 
 	private Dungeon dungeonInstance;
 	private GameObject playerInstance;
@@ -19,6 +33,7 @@ public class GameManager : MonoBehaviour
 
 	public Dungeon DungeonInstance { get => dungeonInstance; set => dungeonInstance = value; }
 	public GameObject PlayerInstance { get => playerInstance; set => playerInstance = value; }
+	public GameState GameState { get => gameState; set => gameState = value; }
 	#endregion
 
 	#region Monobehaviour Callbacks
@@ -34,6 +49,12 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
+		if(playerInstance != null)
+		{
+			playerHealthImage.fillAmount = playerInstance.GetComponent<PlayerBehaviour>().Health / 100;
+			playerManaImage.fillAmount = playerInstance.GetComponent<PlayerBehaviour>().Mana / playerInstance.GetComponent<PlayerBehaviour>().MaxMana;
+		}
+
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
 			RestartGame();

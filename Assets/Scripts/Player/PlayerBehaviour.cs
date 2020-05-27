@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class PlayerMovementBehaviour : MonoBehaviour, IDamageable
+public class PlayerBehaviour : MonoBehaviour, IDamageable
 {
 	[SerializeField] private float health = default;                                        // Health of the player
 	[Space]

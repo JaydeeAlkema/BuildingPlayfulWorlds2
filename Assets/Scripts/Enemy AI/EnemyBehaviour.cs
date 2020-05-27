@@ -13,6 +13,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 {
 	#region Variables
 	[SerializeField] private float health = default;                                // How much health the enemy has.
+	[SerializeField] private float damage = default;                                // How much damage to deal to the player.
 	[Space]
 	[SerializeField] private EnemyState state = EnemyState.Idle;                    // State of the Enemy.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the Enemy Gameobject.
@@ -94,6 +95,8 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			{
 				agent.isStopped = true;
 				renderer.material = attackingMat;
+				target.GetComponent<IDamageable>()?.Damage(damage);
+
 				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
 			}

@@ -115,6 +115,10 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		Gizmos.DrawWireSphere(transform.position, targetInteractionRadius * transform.localScale.x);
 	}
 
-	void IDamageable.Damage(float damage) => health -= damage;
+	void IDamageable.Damage(float damage)
+	{
+		health -= damage;
+		if(health <= 0) Destroy(gameObject);
+	}
 	#endregion
 }

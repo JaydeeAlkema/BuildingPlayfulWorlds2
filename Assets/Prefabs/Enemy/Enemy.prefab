@@ -117,6 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   agent: {fileID: 298271831820822560}
+  renderer: {fileID: 956463114487364711}
   walkSpeed: 1
   targetMask:
     serializedVersion: 2
@@ -126,4 +127,7 @@ MonoBehaviour:
   targetDetectionCheckInterval: 0.1
   targetInteractionInterval: 1
   targetDetectionRadius: 15
-  targetInteractionRadius: 1.5
+  targetInteractionRadius: 1
+  idleMat: {fileID: 2100000, guid: 37871e81b673dea478a10bf703f6e806, type: 2}
+  chasingMat: {fileID: 2100000, guid: 963025fc89cc1d74e8fb27e11c15e7f8, type: 2}
+  attackingMat: {fileID: 2100000, guid: caffc8d08cd697f4e97862824ff28780, type: 2}

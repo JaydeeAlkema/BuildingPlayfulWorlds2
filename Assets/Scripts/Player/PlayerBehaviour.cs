@@ -3,7 +3,21 @@ using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour, IDamageable
 {
+	#region Variables
 	[SerializeField] private float health = default;                                        // Health of the player
+	[SerializeField] private float mana = default;                                          // Mana of the player.
+	[SerializeField] private float maxMana = default;                                       // Maximum Mana of the player.
+	[SerializeField] private float manaRegenAmount = default;                               // How much mana to regenerate every regen tick.
+	[SerializeField] private float manaRegenInterval = default;                             // How much time in between regen ticks.
+	[Space]
+	[SerializeField] private GameObject target = default;                                   // Tagret of the player.
+	[SerializeField] private LayerMask targetMask = default;                                // Which layermask to check for.
+	[Space]
+	[Header("Attack Spells")]
+	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
+	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Primary Attack Prefab.
+	[SerializeField] private KeyCode primaryAttackKey = default;                            // Primary Attack Key.
+	[SerializeField] private KeyCode secundaryAttackKey = default;                          // Secunday Attack Key.
 	[Space]
 	[SerializeField] private CharacterController charController = default;                  // Reference to the Character Controller component.
 	[SerializeField] private string horizontalInputName = default;                          // Name of the Horizontal Input Axis name.
@@ -21,16 +35,32 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private AnimationCurve jumpfallOff = default;                          // What curve to follow when falling downwards.
 	[SerializeField] private float jumpMultiplier = default;                                // How "hard" the player gets pushed upwards.
 	[SerializeField] private KeyCode jumpKey = default;                                     // Which button to press to start jumping.
+	#endregion
+
+	#region Properties
+	public float Health { get => health; set => health = value; }
+	public float Mana { get => mana; set => mana = value; }
+	public float MaxMana { get => maxMana; set => maxMana = value; }
+	#endregion
 
 	private void Awake()
 	{
 		charController = GetComponent<CharacterController>();
 	}
 
+	private void Start()
+	{
+		StartCoroutine(ManaRegen());
+	}
+
 	private void Update()
 	{
 		PlayerMovement();
 		CheckForCellUnderneathPlayer();
+		GetTargetUnderCrosshair();
+		AttackInput();
+
+		if(health <= 0) GameManager.Instance.GameState = GameState.GameOver;
 	}
 
 	private void PlayerMovement()
@@ -64,6 +94,31 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		{
 			isJumping = true;
 			StartCoroutine(JumpEvent());
+		}
+	}
+
+	private void AttackInput()
+	{
+		if(target)
+		{
+			if(Input.GetKeyDown(primaryAttackKey))
+			{
+				AttackEvent(primaryAttackPrefab);
+			}
+			else if(Input.GetKeyDown(secundaryAttackKey))
+			{
+				AttackEvent(secundaryAttackPrefab);
+			}
+		}
+	}
+
+	private void AttackEvent(GameObject attackSpellToSpawns)
+	{
+		if(mana - attackSpellToSpawns.GetComponent<Spell>().ManaCost > 0)
+		{
+			GameObject spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
+			spellGO.GetComponent<Spell>().Target = target.transform;
+			mana -= spellGO.GetComponent<Spell>().ManaCost;
 		}
 	}
 
@@ -102,5 +157,24 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			}
 	}
 
+	private void GetTargetUnderCrosshair()
+	{
+		Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 1000f);
+		if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetMask))
+		{
+			target = hit.collider.gameObject;
+		}
+	}
+
 	void IDamageable.Damage(float damage) => health -= damage;
+
+	private IEnumerator ManaRegen()
+	{
+		while(true)
+		{
+			yield return new WaitForSeconds(manaRegenInterval);
+			if(mana < maxMana) mana += manaRegenAmount;
+			if(mana > maxMana) mana = maxMana;
+		}
+	}
 }

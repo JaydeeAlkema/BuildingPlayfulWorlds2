@@ -11,7 +11,17 @@ public class MainMenu : MonoBehaviour
 	#region Functions
 	public void StartGame()
 	{
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene(1);
+	}
+
+	public void ToggleOptionsMenu()
+	{
+		// To be implemented
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();
 	}
 	#endregion
 }

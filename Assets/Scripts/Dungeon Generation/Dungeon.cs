@@ -52,6 +52,7 @@ public class Dungeon : MonoBehaviour
 		{
 			rooms[i].Hide();
 		}
+
 		rooms[0].Show();    // This is the room where the player will be spawned and will always be a "safe" room.
 		rooms[0].Settings = roomSettings[0];
 
@@ -164,8 +165,7 @@ public class Dungeon : MonoBehaviour
 	private DungeonRoom CreateRoom(int indexToExclude)
 	{
 		DungeonRoom newRoom = ScriptableObject.CreateInstance<DungeonRoom>();
-		if(roomIndex == 0) newRoom.SettingsIndex = 0;
-		else newRoom.SettingsIndex = Random.Range(0, roomSettings.Length);
+		newRoom.SettingsIndex = roomIndex == 0 ? 0 : Random.Range(0, roomSettings.Length);
 
 		if(newRoom.SettingsIndex == indexToExclude)
 		{

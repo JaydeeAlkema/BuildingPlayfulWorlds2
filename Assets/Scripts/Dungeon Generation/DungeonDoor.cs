@@ -19,7 +19,7 @@ public class DungeonDoor : DungeonPassage
 		if(GetOtherSideOfDoor() != null)
 		{
 			isMirrored = true;
-			hinge.localScale = new Vector3(-1f, 1f, 1f);
+			hinge.localScale = new Vector3(-4f, 4f, 4f);
 			Vector3 p = hinge.localPosition;
 			p.x = -p.x;
 			hinge.localPosition = p;

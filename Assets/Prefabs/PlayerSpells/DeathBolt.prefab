@@ -4770,8 +4770,9 @@ MonoBehaviour:
   spellName: DeathBolt
   manaCost: 70
   target: {fileID: 0}
-  moveSpeed: 2
+  lerpTime: 1
   damageToDeal: 34
   impactRadius: 0.25
   impactParticles: {fileID: 1985655064596568, guid: 3c6a1123741797541812bff266a07ed7,
     type: 3}
+  startingPos: {x: 0, y: 0, z: 0}

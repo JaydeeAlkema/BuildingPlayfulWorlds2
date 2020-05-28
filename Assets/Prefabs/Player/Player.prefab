@@ -130,7 +130,7 @@ MonoBehaviour:
   health: 100
   mana: 500
   maxMana: 500
-  manaRegenAmount: 5
+  manaRegenAmount: 10
   manaRegenInterval: 0.5
   target: {fileID: 0}
   targetMask:

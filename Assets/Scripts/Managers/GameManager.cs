@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using TMPro;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -22,10 +24,12 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private DungeonCell cellToSpawnPlayerOn = default;
 	[Space]
 	[SerializeField] private Image playerHealthImage = default;                                   // Reference to the Health UI Image Component.
+	[SerializeField] private TextMeshProUGUI playerHealthImageText = default;                     // Reference to the Health UI Text Component.
 	[SerializeField] private Image playerManaImage = default;                                     // Reference to the Mana UI Image Component.
+	[SerializeField] private TextMeshProUGUI playerManaImageText = default;                       // Reference to the Mana UI Text Component.
 
-	private Dungeon dungeonInstance;
-	private GameObject playerInstance;
+	private Dungeon dungeonInstance = null;
+	private GameObject playerInstance = null;
 	#endregion
 
 	#region Properties
@@ -52,7 +56,9 @@ public class GameManager : MonoBehaviour
 		if(playerInstance != null)
 		{
 			playerHealthImage.fillAmount = playerInstance.GetComponent<PlayerBehaviour>().Health / 100;
+			playerHealthImageText.text = playerInstance.GetComponent<PlayerBehaviour>().Health.ToString();
 			playerManaImage.fillAmount = playerInstance.GetComponent<PlayerBehaviour>().Mana / playerInstance.GetComponent<PlayerBehaviour>().MaxMana;
+			playerManaImageText.text = playerInstance.GetComponent<PlayerBehaviour>().Mana.ToString();
 		}
 
 		if(playerInstance.GetComponent<PlayerBehaviour>().Health <= 0)
@@ -77,15 +83,24 @@ public class GameManager : MonoBehaviour
 	#region Private Functions
 	private IEnumerator BeginGame()
 	{
-		playerInstance = Instantiate(playerPrefab) as GameObject;
-		playerInstance.SetActive(false);
+		if(playerPrefab != null)
+		{
+			playerInstance = Instantiate(playerPrefab) as GameObject;
+			playerInstance.SetActive(false);
+		}
 
-		dungeonInstance = Instantiate(dungeonPrefab) as Dungeon;
-		yield return StartCoroutine(dungeonInstance.Generate());
-		cellToSpawnPlayerOn = dungeonInstance.Rooms[0].Cells[Random.Range(0, dungeonInstance.Rooms[0].Cells.Count)];
+		if(dungeonPrefab != null)
+		{
+			dungeonInstance = Instantiate(dungeonPrefab) as Dungeon;
+			yield return StartCoroutine(dungeonInstance.Generate());
+			cellToSpawnPlayerOn = dungeonInstance.Rooms[0].Cells[Random.Range(0, dungeonInstance.Rooms[0].Cells.Count)];
+		}
 
-		playerInstance.transform.position = new Vector3(cellToSpawnPlayerOn.transform.position.x, .25f, cellToSpawnPlayerOn.transform.position.z);
-		playerInstance.SetActive(true);
+		if(playerInstance != null)
+		{
+			playerInstance.transform.position = new Vector3(cellToSpawnPlayerOn.transform.position.x, .25f, cellToSpawnPlayerOn.transform.position.z);
+			playerInstance.SetActive(true);
+		}
 	}
 	private void RestartGame()
 	{

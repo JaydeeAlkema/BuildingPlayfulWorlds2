@@ -91,6 +91,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	{
 		while(true)
 		{
+			yield return new WaitForSeconds(targetInteractionInterval);
 			if(state == EnemyState.Attacking)
 			{
 				agent.isStopped = true;
@@ -100,7 +101,6 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
 			}
-			yield return new WaitForSeconds(targetInteractionInterval);
 		}
 	}
 	#endregion

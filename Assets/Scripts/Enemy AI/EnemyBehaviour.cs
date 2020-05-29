@@ -14,6 +14,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	#region Variables
 	[SerializeField] private float health = default;                                // How much health the enemy has.
 	[SerializeField] private float damage = default;                                // How much damage to deal to the player.
+	[SerializeField] private int manaWorth = default;                               // How much Mana the player gets back for killing an enemy.
 	[Space]
 	[SerializeField] private EnemyState state = EnemyState.Idle;                    // State of the Enemy.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the Enemy Gameobject.
@@ -43,6 +44,8 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	private void Start()
 	{
 		agent.speed = walkSpeed;
+
+		GetComponent<Outline>().enabled = false;
 	}
 
 	private void OnEnable()
@@ -118,7 +121,11 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	void IDamageable.Damage(float damage)
 	{
 		health -= damage;
-		if(health <= 0) Destroy(gameObject);
+		if(health <= 0)
+		{
+			GameManager.Instance.PlayerInstance.GetComponent<PlayerBehaviour>().Mana += manaWorth;
+			Destroy(gameObject);
+		}
+		#endregion
 	}
-	#endregion
 }

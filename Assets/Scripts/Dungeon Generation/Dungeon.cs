@@ -22,6 +22,7 @@ public class Dungeon : MonoBehaviour
 	[SerializeField] private List<DungeonRoom> rooms = new List<DungeonRoom>();
 
 	private int roomIndex = 0;
+	private int enemyIndex = 0;
 	#endregion
 
 	#region Methods & Properties
@@ -194,8 +195,10 @@ public class Dungeon : MonoBehaviour
 				//}
 
 				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity);
+				newEnemy.name = "Enemy [" + enemyIndex + "]";
 				rooms[r].EnemiesInRoom.Add(newEnemy);
 				rooms[r].Cells[randCellIndex].occupied = true;
+				enemyIndex++;
 			}
 		}
 		yield return null;

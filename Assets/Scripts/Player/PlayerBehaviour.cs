@@ -10,7 +10,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float manaRegenAmount = default;                               // How much mana to regenerate every regen tick.
 	[SerializeField] private float manaRegenInterval = default;                             // How much time in between regen ticks.
 	[Space]
-	[SerializeField] private GameObject target = default;                                   // Tagret of the player.
+	[SerializeField] private GameObject currentTarget = default;                            // Current Target of the player.
+	[SerializeField] private GameObject previousTarget = default;                               // Next Target of the player.
 	[SerializeField] private LayerMask targetMask = default;                                // Which layermask to check for.
 	[Space]
 	[Header("Attack Spells")]
@@ -61,6 +62,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		AttackInput();
 
 		if(health <= 0) GameManager.Instance.GameState = GameState.GameOver;
+		if(mana > MaxMana) mana = maxMana;
 	}
 
 	private void PlayerMovement()
@@ -99,7 +101,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 
 	private void AttackInput()
 	{
-		if(target)
+		if(currentTarget)
 		{
 			if(Input.GetKeyDown(primaryAttackKey))
 			{
@@ -117,7 +119,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		if(mana - attackSpellToSpawns.GetComponent<Spell>().ManaCost > 0)
 		{
 			GameObject spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
-			spellGO.GetComponent<Spell>().Target = target.transform;
+			spellGO.GetComponent<Spell>().Target = currentTarget.transform;
 			mana -= spellGO.GetComponent<Spell>().ManaCost;
 		}
 	}
@@ -162,8 +164,16 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 1000f);
 		if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetMask))
 		{
-			target = hit.collider.gameObject;
+			GameObject nextTarget = hit.collider.gameObject;
+
+			if(nextTarget != currentTarget)
+			{
+				previousTarget = currentTarget;
+				currentTarget = nextTarget;
+			}
 		}
+		if(currentTarget != null) currentTarget.GetComponent<Outline>().enabled = true;
+		if(previousTarget != null) previousTarget.GetComponent<Outline>().enabled = false;
 	}
 
 	void IDamageable.Damage(float damage) => health -= damage;

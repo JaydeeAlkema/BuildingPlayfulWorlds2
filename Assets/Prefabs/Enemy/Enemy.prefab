@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7421727066333869312}
   - component: {fileID: 298271831820822560}
   - component: {fileID: -7608065986186554655}
+  - component: {fileID: 5417137138188725110}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
@@ -132,6 +133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 100
   damage: 10
+  manaWorth: 100
   state: 0
   agent: {fileID: 298271831820822560}
   renderer: {fileID: 956463114487364711}
@@ -148,3 +150,21 @@ MonoBehaviour:
   idleMat: {fileID: 2100000, guid: 37871e81b673dea478a10bf703f6e806, type: 2}
   chasingMat: {fileID: 2100000, guid: 963025fc89cc1d74e8fb27e11c15e7f8, type: 2}
   attackingMat: {fileID: 2100000, guid: caffc8d08cd697f4e97862824ff28780, type: 2}
+--- !u!114 &5417137138188725110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956463114487364709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 1, g: 0, b: 0, a: 1}
+  outlineWidth: 5
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

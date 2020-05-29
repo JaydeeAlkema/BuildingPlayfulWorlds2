@@ -54,20 +54,20 @@ MonoBehaviour:
   doorPrefab: {fileID: 11400002, guid: ddd2858d08f2e45f3b4b479b51caf822, type: 3}
   enemyPrefab: {fileID: 956463114487364709, guid: 4df6db7379b5bfd40922dad8a9a5a399,
     type: 3}
-  doorProbability: 0.075
+  doorProbability: 0.1
   roomSettings:
   - floorMaterial: {fileID: 2100000, guid: 30c54df05c95d6849a2c8293c74ad4f6, type: 2}
     minEnemies: 0
     maxEnemies: 0
   - floorMaterial: {fileID: 2100000, guid: fb88f64b78867a7409bcd967ae381ff8, type: 2}
-    minEnemies: 0
-    maxEnemies: 0
-  - floorMaterial: {fileID: 2100000, guid: 2cbf10d04d145c7458744c5c6f482e45, type: 2}
-    minEnemies: 0
-    maxEnemies: 0
-  - floorMaterial: {fileID: 2100000, guid: 00d0b6e44921a5e4da958e09ec6bf6c3, type: 2}
     minEnemies: 1
     maxEnemies: 5
+  - floorMaterial: {fileID: 2100000, guid: 2cbf10d04d145c7458744c5c6f482e45, type: 2}
+    minEnemies: 3
+    maxEnemies: 6
+  - floorMaterial: {fileID: 2100000, guid: 00d0b6e44921a5e4da958e09ec6bf6c3, type: 2}
+    minEnemies: 3
+    maxEnemies: 9
   rooms: []
 --- !u!1 &4089624549784109185
 GameObject:

@@ -65,6 +65,10 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 
 		if(health <= 0) GameManager.Instance.GameState = GameState.GameOver;
 		if(mana > MaxMana) mana = maxMana;
+
+		if(currentTarget)
+			if(currentTarget.GetComponent<EnemyBehaviour>() != null)
+				if(currentTarget.GetComponent<EnemyBehaviour>().State == EnemyState.Dead) currentTarget = null;
 	}
 
 	private void PlayerMovement()
@@ -105,9 +109,12 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	{
 		if(currentTarget)
 		{
-			if(Input.GetKeyDown(primaryAttackKey))
+			if(currentTarget.GetComponent<EnemyBehaviour>() != null)
 			{
-				AttackEvent(primaryAttackPrefab);
+				if(Input.GetKeyDown(primaryAttackKey))
+				{
+					AttackEvent(primaryAttackPrefab);
+				}
 			}
 		}
 		if(Input.GetKeyDown(secundaryAttackKey))
@@ -190,16 +197,25 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 1000f);
 		if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetMask))
 		{
-			GameObject nextTarget = hit.collider.gameObject;
-
-			if(nextTarget != currentTarget)
+			if(hit.collider.GetComponent<EnemyBehaviour>() != null)
 			{
-				previousTarget = currentTarget;
-				currentTarget = nextTarget;
+				if(hit.collider.GetComponent<EnemyBehaviour>().State != EnemyState.Dead)
+				{
+					GameObject nextTarget = hit.collider.gameObject;
+
+					if(nextTarget != currentTarget)
+					{
+						previousTarget = currentTarget;
+						currentTarget = nextTarget;
+					}
+				}
 			}
 		}
-		if(currentTarget != null) currentTarget.GetComponent<Outline>().enabled = true;
-		if(previousTarget != null) previousTarget.GetComponent<Outline>().enabled = false;
+		if(currentTarget != null)
+			if(currentTarget.GetComponent<Outline>() != null) currentTarget.GetComponent<Outline>().enabled = true;
+
+		if(previousTarget != null)
+			if(previousTarget.GetComponent<Outline>() != null) previousTarget.GetComponent<Outline>().enabled = false;
 	}
 
 	void IDamageable.Damage(float damage)

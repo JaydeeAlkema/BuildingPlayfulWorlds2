@@ -14,7 +14,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float manaRegenInterval = default;                             // How much time in between regen ticks.
 	[Space]
 	[SerializeField] private GameObject currentTarget = default;                            // Current Target of the player.
-	[SerializeField] private GameObject previousTarget = default;                               // Next Target of the player.
+	[SerializeField] private GameObject previousTarget = default;                           // Next Target of the player.
 	[Space]
 	[Header("Attack Spells")]
 	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
@@ -46,6 +46,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	public float MaxMana { get => maxMana; set => maxMana = value; }
 	#endregion
 
+
+	#region Monobehaviour Callbacks
 	private void Awake()
 	{
 		charController = GetComponent<CharacterController>();
@@ -70,7 +72,12 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			if(currentTarget.GetComponent<EnemyBehaviour>() != null)
 				if(currentTarget.GetComponent<EnemyBehaviour>().State == EnemyState.Dead) currentTarget = null;
 	}
+	#endregion
 
+	#region Functions
+	/// <summary>
+	/// Handles the player movement.
+	/// </summary>
 	private void PlayerMovement()
 	{
 		float horInput = Input.GetAxisRaw(horizontalInputName);
@@ -88,6 +95,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		JumpInput();
 	}
 
+	/// <summary>
+	/// Sets the movementspeed
+	/// </summary>
 	private void SetMovementSpeed()
 	{
 		if(Input.GetKey(runKey))
@@ -96,6 +106,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			movementSpeed = Mathf.Lerp(movementSpeed, walkSpeed, Time.deltaTime * runBuildUpSpeed);
 	}
 
+	/// <summary>
+	/// Handles jump input.
+	/// </summary>
 	private void JumpInput()
 	{
 		if(Input.GetKeyDown(jumpKey) && !isJumping)
@@ -105,6 +118,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// Checks for Attack Input.
+	/// </summary>
 	private void AttackInput()
 	{
 		if(currentTarget)
@@ -123,6 +139,10 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// Attack Event.
+	/// </summary>
+	/// <param name="attackSpellToSpawns"></param>
 	private void AttackEvent(GameObject attackSpellToSpawns)
 	{
 		if(mana - attackSpellToSpawns.GetComponent<Spell>().ManaCost > 0)
@@ -157,6 +177,10 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// Jump Event.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator JumpEvent()
 	{
 		charController.slopeLimit = 90f;
@@ -172,6 +196,10 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		isJumping = false;
 	}
 
+	/// <summary>
+	/// Handles everything that should be done when walking over a slope.
+	/// </summary>
+	/// <returns></returns>
 	private bool OnSlope()
 	{
 		if(isJumping)
@@ -183,6 +211,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		return false;
 	}
 
+	/// <summary>
+	/// Checks for a cell underneath the player.
+	/// </summary>
 	private void CheckForCellUnderneathPlayer()
 	{
 		if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, charController.height / 2f * slopeForceRayLength))
@@ -192,6 +223,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			}
 	}
 
+	/// <summary>
+	/// Gets a target from the target layermask underneath the crosshair.
+	/// </summary>
 	private void GetTargetUnderCrosshair()
 	{
 		Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 1000f);
@@ -218,16 +252,30 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			if(previousTarget.GetComponent<Outline>() != null) previousTarget.GetComponent<Outline>().enabled = false;
 	}
 
+	/// <summary>
+	/// IDamageable Damage Implementation
+	/// Removes health from the health pool.
+	/// </summary>
+	/// <param name="damage"></param>
 	void IDamageable.Damage(float damage)
 	{
 		health -= damage;
 	}
 
+	/// <summary>
+	/// Changes the movement speed.
+	/// Only used when stepping on de Poisoned Ground Spell.
+	/// </summary>
+	/// <param name="value"></param>
 	void IDamageable.ImpactMovementSpeed(float value)
 	{
 		movementSpeed = value;
 	}
 
+	/// <summary>
+	/// Actively Regenerates the players Mana.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator ManaRegen()
 	{
 		while(true)
@@ -237,4 +285,5 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			if(mana > maxMana) mana = maxMana;
 		}
 	}
+	#endregion
 }

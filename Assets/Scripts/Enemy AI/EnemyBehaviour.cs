@@ -66,6 +66,11 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	#endregion
 
 	#region Functions
+	/// <summary>
+	/// Searches for the nearest target.
+	/// As of now it just gets the player from the Game Manager.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator SearchForTarget()
 	{
 		while(true)
@@ -81,6 +86,10 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// Moves the enemy to the target at a set interval.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator MoveToTarget()
 	{
 		while(true)
@@ -98,6 +107,10 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// Attacks the target at a set interval
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator AttackTarget()
 	{
 		while(true)
@@ -115,6 +128,11 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// IDamageable Damage Implementation
+	/// Decreases the health and handles what needs to happen when health falls bellow 0.
+	/// </summary>
+	/// <param name="damage"></param>
 	void IDamageable.Damage(float damage)
 	{
 		health -= damage;
@@ -127,6 +145,21 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		}
 	}
 
+	/// <summary>
+	/// IDamageable Impact Movement Speed Implementation.
+	/// This slows the enemy down to a crawl.
+	/// </summary>
+	/// <param name="value"></param>
+	void IDamageable.ImpactMovementSpeed(float value)
+	{
+		moveSpeed = value;
+		agent.speed = moveSpeed;
+	}
+
+	/// <summary>
+	/// Removes all the active components once the Enemy is considered Dead.
+	/// This is done so the enemy carcass can still exist in the world without having all the code still run on the background.
+	/// </summary>
 	private void RemoveAllActiveComponents()
 	{
 		target = null;
@@ -135,12 +168,6 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		Destroy(GetComponent<CapsuleCollider>());
 		Destroy(GetComponent<NavMeshAgent>());
 		Destroy(this);
-	}
-
-	void IDamageable.ImpactMovementSpeed(float value)
-	{
-		moveSpeed = value;
-		agent.speed = moveSpeed;
 	}
 	#endregion
 

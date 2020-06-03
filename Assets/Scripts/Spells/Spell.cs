@@ -82,6 +82,11 @@ public class Spell : MonoBehaviour
 	#endregion
 
 	#region Functions
+	/// <summary>
+	/// Gets all the enemies withing a certain radius.
+	/// This gets send to the targets in radius list. This list is cleared each time we check for targets.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator GetAllEnemiesWithinSpellRadius()
 	{
 		while(timeLeftToTick > 0)
@@ -99,6 +104,10 @@ public class Spell : MonoBehaviour
 		yield return null;
 	}
 
+	/// <summary>
+	/// Damages all the enemies in the Targets in radius list.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator DamageEnemiesWithinSpellRadius()
 	{
 		while(timeLeftToTick > 0)

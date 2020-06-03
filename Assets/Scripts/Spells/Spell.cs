@@ -18,6 +18,7 @@ public class Spell : MonoBehaviour
 	[SerializeField] private SpellType spellType = SpellType.TargetBased;   // Type of the spell.
 	[SerializeField] private string spellName = default;                    // Name of the spell.
 	[SerializeField] private float manaCost = default;                      // How much mana it costs to cast this spell.
+	[SerializeField] private LayerMask targetMask = default;                // The layer for the enemies.
 
 	[Header("Base Variables")]
 	[SerializeField] private float damageToDeal = default;                  // How much damage to deal on impact.
@@ -29,11 +30,12 @@ public class Spell : MonoBehaviour
 	[SerializeField] private Vector3 startingPos = default;                 // the starting position of the enemy.
 
 	[Header("Ground Based Spell")]
+	[SerializeField] private float spellTick = 1f;                          // How often per second it ticks.
 	[SerializeField] private float spellDuration = default;                 // How long the spell lasts untill it stops.
-	[SerializeField] private float damageInterval = default;                // How much time between damage ticks.
 	[SerializeField] private float impactRadius = default;                  // The radius of impact. So how close the spell has to come to the target for impact.
-	[SerializeField] private GameObject[] targetsInRadius = default;        // Array with all the targets within the radius.
+	[SerializeField] private List<GameObject> targetsInRadius = new List<GameObject>();        // Array with all the targets within the radius.
 
+	private float timeLeftToTick;
 	private float timeStartedLerping;
 	private bool isActive = true;                                           // If the spell is active.
 	#endregion
@@ -41,22 +43,73 @@ public class Spell : MonoBehaviour
 	#region Properties
 	public Transform Target { get => target; set => target = value; }
 	public float ManaCost { get => manaCost; set => manaCost = value; }
+	public SpellType SpellType { get => spellType; set => spellType = value; }
 	#endregion
 
+
+	#region Monobehaviour Callbacks
 	private void Start()
 	{
-		startingPos = transform.position;
-		timeStartedLerping = Time.time;
+		if(spellType == SpellType.TargetBased)
+		{
+			startingPos = transform.position;
+			timeStartedLerping = Time.time;
+		}
+		else if(spellType == SpellType.GroundBased)
+		{
+			timeLeftToTick = spellDuration;
+			StartCoroutine(GetAllEnemiesWithinSpellRadius());
+			StartCoroutine(DamageEnemiesWithinSpellRadius());
+		}
 	}
 
 	private void Update()
 	{
-		if(spellType == SpellType.TargetBased) MoveToTarget();
+		switch(spellType)
+		{
+			case SpellType.TargetBased:
+				MoveToTarget();
+				break;
+
+			case SpellType.GroundBased:
+				if(timeLeftToTick <= 0) Destroy(gameObject, 3f);
+				break;
+
+			default:
+				break;
+		}
+	}
+	#endregion
+
+	#region Functions
+	private IEnumerator GetAllEnemiesWithinSpellRadius()
+	{
+		while(timeLeftToTick > 0)
+		{
+			targetsInRadius.Clear();
+			Collider[] targetsWithinRadius = Physics.OverlapSphere(transform.position, impactRadius, targetMask);
+
+			foreach(Collider target in targetsWithinRadius)
+			{
+				targetsInRadius.Add(target.gameObject);
+			}
+			timeLeftToTick -= 1f;
+			yield return new WaitForSeconds(spellTick);
+		}
+		yield return null;
 	}
 
-	private IEnumerator GroundedBasedDamageSpell()
+	private IEnumerator DamageEnemiesWithinSpellRadius()
 	{
-		// Do stuff
+		while(timeLeftToTick > 0)
+		{
+			foreach(GameObject enemy in targetsInRadius)
+			{
+				enemy.GetComponent<IDamageable>()?.Damage(damageToDeal);
+				enemy.GetComponent<IDamageable>()?.ImpactMovementSpeed(enemy.GetComponent<EnemyBehaviour>().MoveSpeed / 3f);
+			}
+			yield return new WaitForSeconds(spellTick);
+		}
 		yield return null;
 	}
 
@@ -95,4 +148,13 @@ public class Spell : MonoBehaviour
 		Vector3 result = Vector3.Lerp(startPos, endPos, percentageComplete);
 		return result;
 	}
+	#endregion
+
+	#region Debug
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireSphere(transform.position, impactRadius);
+	}
+	#endregion
 }

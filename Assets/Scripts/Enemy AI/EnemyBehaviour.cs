@@ -15,37 +15,41 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float health = default;                                // How much health the enemy has.
 	[SerializeField] private float damage = default;                                // How much damage to deal to the player.
 	[SerializeField] private int manaWorth = default;                               // How much Mana the player gets back for killing an enemy.
-	[Space]
+	[Header("Core Properties")]
 	[SerializeField] private EnemyState state = EnemyState.Idle;                    // State of the Enemy.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the Enemy Gameobject.
-	[SerializeField] private MeshRenderer renderer = default;                       // Reference to the Mesh Renderer component.
+	[SerializeField] private Animator anim = default;                               // Reference to the animator component.
 	[Header("Movement Properties")]
-	[SerializeField] private float walkSpeed = 3.5f;                                // Walking speed of the Enemy.
+	[SerializeField] private float moveSpeed = 3.5f;                                // Walking speed of the Enemy.
 	[Header("Targeting Properties")]
 	[SerializeField] private LayerMask targetMask = default;                        // Which layers to check for target.
 	[SerializeField] private Transform target = null;                               // Reference to the target transform.
 	[SerializeField] private float targetDestinationUpdateInterval = 0.1f;          // How often the destination will be set for the AI.
 	[SerializeField] private float targetDetectionCheckInterval = 0.1f;             // How much time between target detection.
 	[SerializeField] private float targetInteractionInterval = 1f;                  // How much time between attacks.
-
 	[SerializeField] private float targetDetectionRadius = 15f;                     // How far the Enemy can "See".
 	[SerializeField] private float targetInteractionRadius = 1f;                    // How far the Enemy can "Interact" with the target.
-	[Header("Debugging Materials")]
-	[SerializeField] private Material idleMat = default;                            // Which Material to show when Idle.
-	[SerializeField] private Material chasingMat = default;                         // Which Material to show when Chasing.
-	[SerializeField] private Material attackingMat = default;                       // Which Material to show when Attacking.
+
+	private float maxMoveSpeed;
 	#endregion
 
 	#region Properties
-
+	public float MoveSpeed { get => moveSpeed; set => moveSpeed = value; }
 	#endregion
 
 	#region Monobehaviour Callbacks
 	private void Start()
 	{
-		agent.speed = walkSpeed;
+		agent.speed = moveSpeed;
+		maxMoveSpeed = moveSpeed;
 
 		GetComponent<Outline>().enabled = false;
+	}
+
+	private void Update()
+	{
+		anim.SetFloat("Velocity", agent.velocity.magnitude);
+		anim.SetBool("Attacking", state == EnemyState.Attacking ? true : false);
 	}
 
 	private void OnEnable()
@@ -64,7 +68,6 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			if(state == EnemyState.Idle)
 			{
 				agent.isStopped = false;
-				renderer.material = idleMat;
 				if(!target) target = GameManager.Instance.PlayerInstance.transform;
 				else state = EnemyState.Chasing;
 				Debug.Log("[" + gameObject.name + "]" + " Searching for Target");
@@ -80,7 +83,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			if(state == EnemyState.Chasing)
 			{
 				agent.isStopped = false;
-				renderer.material = chasingMat;
+				agent.speed = moveSpeed;
 				agent.destination = target.position;
 				Debug.Log("[" + gameObject.name + "]" + " Moving Towards Target");
 
@@ -98,13 +101,29 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			if(state == EnemyState.Attacking)
 			{
 				agent.isStopped = true;
-				renderer.material = attackingMat;
 				target.GetComponent<IDamageable>()?.Damage(damage);
 
 				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
 			}
+			yield return null;
 		}
+	}
+
+	void IDamageable.Damage(float damage)
+	{
+		health -= damage;
+		if(health <= 0)
+		{
+			GameManager.Instance.PlayerInstance.GetComponent<PlayerBehaviour>().Mana += manaWorth;
+			Destroy(gameObject);
+		}
+	}
+
+	void IDamageable.ImpactMovementSpeed(float value)
+	{
+		moveSpeed = value;
+		agent.speed = moveSpeed;
 	}
 	#endregion
 
@@ -117,15 +136,5 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.position, targetInteractionRadius * transform.localScale.x);
 	}
-
-	void IDamageable.Damage(float damage)
-	{
-		health -= damage;
-		if(health <= 0)
-		{
-			GameManager.Instance.PlayerInstance.GetComponent<PlayerBehaviour>().Mana += manaWorth;
-			Destroy(gameObject);
-		}
-		#endregion
-	}
+	#endregion
 }

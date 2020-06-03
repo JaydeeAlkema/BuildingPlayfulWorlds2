@@ -6,7 +6,8 @@ public enum EnemyState
 {
 	Idle,
 	Chasing,
-	Attacking
+	Attacking,
+	Dead
 }
 
 public class EnemyBehaviour : MonoBehaviour, IDamageable
@@ -35,6 +36,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 
 	#region Properties
 	public float MoveSpeed { get => moveSpeed; set => moveSpeed = value; }
+	public EnemyState State { get => state; set => state = value; }
 	#endregion
 
 	#region Monobehaviour Callbacks
@@ -48,8 +50,11 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 
 	private void Update()
 	{
-		anim.SetFloat("Velocity", agent.velocity.magnitude);
-		anim.SetBool("Attacking", state == EnemyState.Attacking ? true : false);
+		if(state != EnemyState.Dead)
+		{
+			anim.SetFloat("Velocity", agent.velocity.magnitude);
+			anim.SetBool("Attacking", state == EnemyState.Attacking ? true : false);
+		}
 	}
 
 	private void OnEnable()
@@ -115,9 +120,21 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		health -= damage;
 		if(health <= 0)
 		{
+			state = EnemyState.Dead;
 			GameManager.Instance.PlayerInstance.GetComponent<PlayerBehaviour>().Mana += manaWorth;
-			Destroy(gameObject);
+			anim.SetBool("Dead", true);
+			RemoveAllActiveComponents();
 		}
+	}
+
+	private void RemoveAllActiveComponents()
+	{
+		target = null;
+		agent.isStopped = true;
+		Destroy(GetComponent<Outline>());
+		Destroy(GetComponent<CapsuleCollider>());
+		Destroy(GetComponent<NavMeshAgent>());
+		Destroy(this);
 	}
 
 	void IDamageable.ImpactMovementSpeed(float value)

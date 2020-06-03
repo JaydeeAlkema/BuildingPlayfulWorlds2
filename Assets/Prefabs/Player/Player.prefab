@@ -127,18 +127,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67c1ce19429aa5646873eeb534c29506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 256
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 512
   health: 100
   mana: 500
   maxMana: 500
   manaRegenAmount: 10
   manaRegenInterval: 0.5
-  target: {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 256
+  currentTarget: {fileID: 0}
+  previousTarget: {fileID: 0}
   primaryAttackPrefab: {fileID: 1985655064596568, guid: d2b4683435cac1a4ba39b235e4451844,
     type: 3}
-  secundaryAttackPrefab: {fileID: 1985655064596568, guid: d2b4683435cac1a4ba39b235e4451844,
+  secundaryAttackPrefab: {fileID: 1489250614823085774, guid: 18f5c5be3a54a0743b81d1f43278e05c,
     type: 3}
   primaryAttackKey: 323
   secundaryAttackKey: 324

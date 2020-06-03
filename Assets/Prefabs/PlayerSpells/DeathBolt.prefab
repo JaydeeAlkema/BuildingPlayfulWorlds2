@@ -4767,12 +4767,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f3d4ef669f559429f47eff5b21f63d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellType: 0
   spellName: DeathBolt
   manaCost: 70
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 256
+  damageToDeal: 34
   target: {fileID: 0}
   lerpTime: 1
-  damageToDeal: 34
-  impactRadius: 0.25
   impactParticles: {fileID: 1985655064596568, guid: 3c6a1123741797541812bff266a07ed7,
     type: 3}
   startingPos: {x: 0, y: 0, z: 0}
+  spellTick: 1
+  spellDuration: 0
+  impactRadius: 0.25
+  targetsInRadius: []

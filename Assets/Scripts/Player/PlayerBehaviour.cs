@@ -4,6 +4,9 @@ using UnityEngine;
 public class PlayerBehaviour : MonoBehaviour, IDamageable
 {
 	#region Variables
+	[SerializeField] private LayerMask targetMask = default;                                // Target Layer.
+	[SerializeField] private LayerMask groundMask = default;                                // Ground Layer.
+
 	[SerializeField] private float health = default;                                        // Health of the player
 	[SerializeField] private float mana = default;                                          // Mana of the player.
 	[SerializeField] private float maxMana = default;                                       // Maximum Mana of the player.
@@ -12,7 +15,6 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[Space]
 	[SerializeField] private GameObject currentTarget = default;                            // Current Target of the player.
 	[SerializeField] private GameObject previousTarget = default;                               // Next Target of the player.
-	[SerializeField] private LayerMask targetMask = default;                                // Which layermask to check for.
 	[Space]
 	[Header("Attack Spells")]
 	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
@@ -26,7 +28,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[Space]
 	private float movementSpeed = default;                                                  // Final movement speed depending on input.
 	[SerializeField] private float walkSpeed = default;                                     // Base Walking speed.
-	[SerializeField] private float runSpeed = default;                                      // Base Running speed.					
+	[SerializeField] private float runSpeed = default;                                      // Base Running speed.
 	[SerializeField] private float runBuildUpSpeed = default;                               // How fast the player transitions from Walking to running.
 	[SerializeField] private KeyCode runKey = default;                                      // Which key to press to start running.
 	[SerializeField] private float slopeForce = default;                                    // How hard the player gets pushed downwards on a slope.
@@ -107,10 +109,10 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			{
 				AttackEvent(primaryAttackPrefab);
 			}
-			else if(Input.GetKeyDown(secundaryAttackKey))
-			{
-				AttackEvent(secundaryAttackPrefab);
-			}
+		}
+		if(Input.GetKeyDown(secundaryAttackKey))
+		{
+			AttackEvent(secundaryAttackPrefab);
 		}
 	}
 
@@ -118,9 +120,33 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	{
 		if(mana - attackSpellToSpawns.GetComponent<Spell>().ManaCost > 0)
 		{
-			GameObject spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
-			spellGO.GetComponent<Spell>().Target = currentTarget.transform;
-			mana -= spellGO.GetComponent<Spell>().ManaCost;
+			GameObject spellGO = null;
+			switch(attackSpellToSpawns.GetComponent<Spell>().SpellType)
+			{
+				case SpellType.TargetBased:
+					spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
+					spellGO.GetComponent<Spell>().Target = currentTarget.transform;
+					mana -= spellGO.GetComponent<Spell>().ManaCost;
+					break;
+
+				case SpellType.GroundBased:
+					Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 30);
+					Vector3 spellGOSpawnPoint = Vector3.zero;
+					if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundMask))
+					{
+						spellGOSpawnPoint = hit.point;
+					}
+
+					if(spellGOSpawnPoint != Vector3.zero)
+					{
+						spellGO = Instantiate(attackSpellToSpawns, spellGOSpawnPoint, transform.rotation);
+						mana -= spellGO.GetComponent<Spell>().ManaCost;
+					}
+					break;
+
+				default:
+					break;
+			}
 		}
 	}
 
@@ -176,7 +202,15 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		if(previousTarget != null) previousTarget.GetComponent<Outline>().enabled = false;
 	}
 
-	void IDamageable.Damage(float damage) => health -= damage;
+	void IDamageable.Damage(float damage)
+	{
+		health -= damage;
+	}
+
+	void IDamageable.ImpactMovementSpeed(float value)
+	{
+		movementSpeed = value;
+	}
 
 	private IEnumerator ManaRegen()
 	{

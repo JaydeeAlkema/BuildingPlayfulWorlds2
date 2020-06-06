@@ -57,9 +57,8 @@ MonoBehaviour:
   impactParticles: {fileID: 1985655064596568, guid: 3c6a1123741797541812bff266a07ed7,
     type: 3}
   startingPos: {x: 0, y: 0, z: 0}
-  spellTick: 1
-  spellDuration: 5
-  damageInterval: 0
+  spellTick: 2
+  spellDuration: 6
   impactRadius: 5
   targetsInRadius: []
 --- !u!1001 &1489250615288820224
@@ -73,6 +72,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PoisonedGrounds_Inner
+      objectReference: {fileID: 0}
+    - target: {fileID: 1384490896701755233, guid: 0c6b5dba293899543985dabd97082f04,
+        type: 3}
+      propertyPath: lengthInSec
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4583693567177948258, guid: 0c6b5dba293899543985dabd97082f04,
         type: 3}
@@ -198,6 +202,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1407027698205788834, guid: efa38503f320bd4429a3dc4a154b74f5,
+        type: 3}
+      propertyPath: lengthInSec
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4546492701145807250, guid: efa38503f320bd4429a3dc4a154b74f5,
         type: 3}

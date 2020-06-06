@@ -141,6 +141,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			state = EnemyState.Dead;
 			GameManager.Instance.PlayerInstance.GetComponent<PlayerBehaviour>().Mana += manaWorth;
 			anim.SetBool("Dead", true);
+			gameObject.name = gameObject.name + " -DEAD-";
 			RemoveAllActiveComponents();
 		}
 	}

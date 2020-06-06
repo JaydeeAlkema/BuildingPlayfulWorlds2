@@ -18,15 +18,17 @@ public class GameManager : MonoBehaviour
 	private static GameManager instance = null;
 
 	[SerializeField] private GameState gameState = GameState.Active;                // The state of the game.
-	[Space]
-	[SerializeField] private Dungeon dungeonPrefab = default;
-	[SerializeField] private GameObject playerPrefab = default;
-	[SerializeField] private DungeonCell cellToSpawnPlayerOn = default;
-	[Space]
-	[SerializeField] private Image playerHealthImage = default;                                   // Reference to the Health UI Image Component.
-	[SerializeField] private TextMeshProUGUI playerHealthImageText = default;                     // Reference to the Health UI Text Component.
-	[SerializeField] private Image playerManaImage = default;                                     // Reference to the Mana UI Image Component.
-	[SerializeField] private TextMeshProUGUI playerManaImageText = default;                       // Reference to the Mana UI Text Component.
+	[Header("Dungeon and Player Properties")]
+	[SerializeField] private Dungeon dungeonPrefab = default;                       // Reference to the dungeon prefab.
+	[SerializeField] private GameObject playerPrefab = default;                     // Reference to the Player prefab.
+	[SerializeField] private DungeonCell cellToSpawnPlayerOn = default;             // Which cell the player to spawn on.
+	[Header("UI Properties")]
+	[SerializeField] private Image playerHealthImage = default;                     // Reference to the Health UI Image Component.
+	[SerializeField] private TextMeshProUGUI playerHealthImageText = default;       // Reference to the Health UI Text Component.
+	[SerializeField] private Image playerManaImage = default;                       // Reference to the Mana UI Image Component.
+	[SerializeField] private TextMeshProUGUI playerManaImageText = default;         // Reference to the Mana UI Text Component.
+	[Header("Enemy Properties")]
+	[SerializeField] private Transform enemyOnInstantiateParent = default;          // Reference to the parent transform for the newly spawned enemies.
 
 	private Dungeon dungeonInstance = null;
 	private GameObject playerInstance = null;
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
 	public Dungeon DungeonInstance { get => dungeonInstance; set => dungeonInstance = value; }
 	public GameObject PlayerInstance { get => playerInstance; set => playerInstance = value; }
 	public GameState GameState { get => gameState; set => gameState = value; }
+	public Transform EnemyOnInstantiateParent { get => enemyOnInstantiateParent; set => enemyOnInstantiateParent = value; }
 	#endregion
 
 	#region Monobehaviour Callbacks

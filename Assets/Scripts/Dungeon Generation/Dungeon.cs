@@ -194,7 +194,7 @@ public class Dungeon : MonoBehaviour
 				//	randCellIndex = Random.Range(0, rooms[r].Cells.Count);
 				//}
 
-				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity);
+				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity, GameManager.Instance.EnemyOnInstantiateParent);
 				newEnemy.name = "Enemy [" + enemyIndex + "]";
 				rooms[r].EnemiesInRoom.Add(newEnemy);
 				rooms[r].Cells[randCellIndex].occupied = true;

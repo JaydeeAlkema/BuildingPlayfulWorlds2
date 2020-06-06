@@ -18,7 +18,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[Space]
 	[Header("Attack Spells")]
 	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
+	[SerializeField] private float primaryAttackCooldown = 1f;                              // Cooldown that starts after the use of the Primary Attack.
 	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Primary Attack Prefab.
+	[SerializeField] private float secundaryAttackCooldown = 15f;                           // Cooldown that starts after the use of the Secundary Attack.
 	[SerializeField] private KeyCode primaryAttackKey = default;                            // Primary Attack Key.
 	[SerializeField] private KeyCode secundaryAttackKey = default;                          // Secunday Attack Key.
 	[Space]
@@ -38,6 +40,10 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private AnimationCurve jumpfallOff = default;                          // What curve to follow when falling downwards.
 	[SerializeField] private float jumpMultiplier = default;                                // How "hard" the player gets pushed upwards.
 	[SerializeField] private KeyCode jumpKey = default;                                     // Which button to press to start jumping.
+
+	[Header("Debugging")]
+	[SerializeField] private bool primaryAttackOnCooldown = false;
+	[SerializeField] private bool secundaryAttackOnCooldown = false;
 	#endregion
 
 	#region Properties
@@ -45,7 +51,6 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	public float Mana { get => mana; set => mana = value; }
 	public float MaxMana { get => maxMana; set => maxMana = value; }
 	#endregion
-
 
 	#region Monobehaviour Callbacks
 	private void Awake()
@@ -151,23 +156,33 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			switch(attackSpellToSpawns.GetComponent<Spell>().SpellType)
 			{
 				case SpellType.TargetBased:
-					spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
-					spellGO.GetComponent<Spell>().Target = currentTarget.transform;
-					mana -= spellGO.GetComponent<Spell>().ManaCost;
+					if(!primaryAttackOnCooldown)
+					{
+						spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
+						spellGO.GetComponent<Spell>().Target = currentTarget.transform;
+						mana -= spellGO.GetComponent<Spell>().ManaCost;
+						primaryAttackOnCooldown = true;
+						StartCoroutine(PrimaryAttackCooldown());
+					}
 					break;
 
 				case SpellType.GroundBased:
-					Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 30);
-					Vector3 spellGOSpawnPoint = Vector3.zero;
-					if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundMask))
+					if(!secundaryAttackOnCooldown)
 					{
-						spellGOSpawnPoint = hit.point;
-					}
+						Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 30);
+						Vector3 spellGOSpawnPoint = Vector3.zero;
+						if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundMask))
+						{
+							spellGOSpawnPoint = hit.point;
+						}
 
-					if(spellGOSpawnPoint != Vector3.zero)
-					{
-						spellGO = Instantiate(attackSpellToSpawns, spellGOSpawnPoint, transform.rotation);
-						mana -= spellGO.GetComponent<Spell>().ManaCost;
+						if(spellGOSpawnPoint != Vector3.zero)
+						{
+							spellGO = Instantiate(attackSpellToSpawns, spellGOSpawnPoint, transform.rotation);
+							mana -= spellGO.GetComponent<Spell>().ManaCost;
+						}
+						secundaryAttackOnCooldown = true;
+						StartCoroutine(SecundaryAttackCooldown());
 					}
 					break;
 
@@ -175,6 +190,22 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 					break;
 			}
 		}
+	}
+
+	/// <summary>
+	/// Toggles the primary attack cooldown.
+	/// </summary>
+	/// <returns></returns>
+	private IEnumerator PrimaryAttackCooldown()
+	{
+		yield return new WaitForSeconds(primaryAttackCooldown);
+		primaryAttackOnCooldown = false;
+	}
+
+	private IEnumerator SecundaryAttackCooldown()
+	{
+		yield return new WaitForSeconds(secundaryAttackCooldown);
+		secundaryAttackOnCooldown = false;
 	}
 
 	/// <summary>

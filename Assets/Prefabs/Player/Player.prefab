@@ -137,21 +137,23 @@ MonoBehaviour:
   mana: 500
   maxMana: 500
   manaRegenAmount: 10
-  manaRegenInterval: 0.5
+  manaRegenInterval: 1
   currentTarget: {fileID: 0}
   previousTarget: {fileID: 0}
   primaryAttackPrefab: {fileID: 1985655064596568, guid: d2b4683435cac1a4ba39b235e4451844,
     type: 3}
+  primaryAttackCooldown: 1
   secundaryAttackPrefab: {fileID: 1489250614823085774, guid: 18f5c5be3a54a0743b81d1f43278e05c,
     type: 3}
+  secundaryAttackCooldown: 15
   primaryAttackKey: 323
   secundaryAttackKey: 324
   charController: {fileID: 2677591326824086564}
   horizontalInputName: Horizontal
   verticalInputName: Vertical
-  walkSpeed: 7
-  runSpeed: 12.5
-  runBuildUpSpeed: 5
+  walkSpeed: 4
+  runSpeed: 8
+  runBuildUpSpeed: 10
   runKey: 304
   slopeForce: 100
   slopeForceRayLength: 10
@@ -182,6 +184,8 @@ MonoBehaviour:
     m_RotationOrder: 4
   jumpMultiplier: 1
   jumpKey: 32
+  primaryAttackOnCooldown: 0
+  secundaryAttackOnCooldown: 0
 --- !u!1 &8625150953803067223
 GameObject:
   m_ObjectHideFlags: 0

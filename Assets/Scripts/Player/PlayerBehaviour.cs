@@ -6,7 +6,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	#region Variables
 	[SerializeField] private LayerMask targetMask = default;                                // Target Layer.
 	[SerializeField] private LayerMask groundMask = default;                                // Ground Layer.
-
+	[Header("Player Properties")]
 	[SerializeField] private float health = default;                                        // Health of the player
 	[SerializeField] private float mana = default;                                          // Mana of the player.
 	[SerializeField] private float maxMana = default;                                       // Maximum Mana of the player.
@@ -15,7 +15,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[Space]
 	[SerializeField] private GameObject currentTarget = default;                            // Current Target of the player.
 	[SerializeField] private GameObject previousTarget = default;                           // Next Target of the player.
-	[Space]
+
 	[Header("Attack Spells")]
 	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
 	[SerializeField] private float primaryAttackCooldown = 1f;                              // Cooldown that starts after the use of the Primary Attack.
@@ -27,7 +27,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private CharacterController charController = default;                  // Reference to the Character Controller component.
 	[SerializeField] private string horizontalInputName = default;                          // Name of the Horizontal Input Axis name.
 	[SerializeField] private string verticalInputName = default;                            // Name of the Vertical Input Axis name.
-	[Space]
+
+	[Header("Movement Properties")]
 	private float movementSpeed = default;                                                  // Final movement speed depending on input.
 	[SerializeField] private float walkSpeed = default;                                     // Base Walking speed.
 	[SerializeField] private float runSpeed = default;                                      // Base Running speed.
@@ -124,6 +125,40 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	}
 
 	/// <summary>
+	/// Jump Event.
+	/// </summary>
+	/// <returns></returns>
+	private IEnumerator JumpEvent()
+	{
+		charController.slopeLimit = 90f;
+		float timeInAir = 0f;
+		do
+		{
+			float jumpForce = jumpfallOff.Evaluate(timeInAir);
+			charController.Move(Vector3.up * jumpForce * jumpMultiplier * Time.deltaTime);
+			timeInAir += Time.deltaTime;
+			yield return null;
+		} while(!charController.isGrounded && charController.collisionFlags != CollisionFlags.Above);
+		charController.slopeLimit = 45f;
+		isJumping = false;
+	}
+
+	/// <summary>
+	/// Handles everything that should be done when walking over a slope.
+	/// </summary>
+	/// <returns></returns>
+	private bool OnSlope()
+	{
+		if(isJumping)
+			return false;
+
+		if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, charController.height / 2f * slopeForceRayLength))
+			if(hit.normal != Vector3.up)
+				return true;
+		return false;
+	}
+
+	/// <summary>
 	/// Checks for Attack Input.
 	/// </summary>
 	private void AttackInput()
@@ -201,45 +236,15 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		yield return new WaitForSeconds(primaryAttackCooldown);
 		primaryAttackOnCooldown = false;
 	}
-
+	
+	/// <summary>
+	/// Toggles the Secundary attack cooldown.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator SecundaryAttackCooldown()
 	{
 		yield return new WaitForSeconds(secundaryAttackCooldown);
 		secundaryAttackOnCooldown = false;
-	}
-
-	/// <summary>
-	/// Jump Event.
-	/// </summary>
-	/// <returns></returns>
-	private IEnumerator JumpEvent()
-	{
-		charController.slopeLimit = 90f;
-		float timeInAir = 0f;
-		do
-		{
-			float jumpForce = jumpfallOff.Evaluate(timeInAir);
-			charController.Move(Vector3.up * jumpForce * jumpMultiplier * Time.deltaTime);
-			timeInAir += Time.deltaTime;
-			yield return null;
-		} while(!charController.isGrounded && charController.collisionFlags != CollisionFlags.Above);
-		charController.slopeLimit = 45f;
-		isJumping = false;
-	}
-
-	/// <summary>
-	/// Handles everything that should be done when walking over a slope.
-	/// </summary>
-	/// <returns></returns>
-	private bool OnSlope()
-	{
-		if(isJumping)
-			return false;
-
-		if(Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, charController.height / 2f * slopeForceRayLength))
-			if(hit.normal != Vector3.up)
-				return true;
-		return false;
 	}
 
 	/// <summary>

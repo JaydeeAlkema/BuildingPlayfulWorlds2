@@ -16,12 +16,17 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float health = default;                                // How much health the enemy has.
 	[SerializeField] private float damage = default;                                // How much damage to deal to the player.
 	[SerializeField] private int manaWorth = default;                               // How much Mana the player gets back for killing an enemy.
+
 	[Header("Core Properties")]
 	[SerializeField] private EnemyState state = EnemyState.Idle;                    // State of the Enemy.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the Enemy Gameobject.
 	[SerializeField] private Animator anim = default;                               // Reference to the animator component.
+
 	[Header("Movement Properties")]
 	[SerializeField] private float moveSpeed = 3.5f;                                // Walking speed of the Enemy.
+	[SerializeField] private AudioSource audioSource = default;                     // Reference to the audio source component.
+	[SerializeField] private AudioClip[] walkSoundAudioClips = default;             // Array with all the walk sound effects.
+
 	[Header("Targeting Properties")]
 	[SerializeField] private LayerMask targetMask = default;                        // Which layers to check for target.
 	[SerializeField] private Transform target = null;                               // Reference to the target transform.
@@ -46,6 +51,8 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		maxMoveSpeed = moveSpeed;
 
 		GetComponent<Outline>().enabled = false;
+
+		StartCoroutine(PlayMovementAudio());
 	}
 
 	private void Update()
@@ -123,6 +130,24 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 
 				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = EnemyState.Chasing;
+			}
+			yield return null;
+		}
+	}
+
+	/// <summary>
+	/// Plays movement audio depending on the movement speed.
+	/// </summary>
+	/// <returns></returns>
+	private IEnumerator PlayMovementAudio()
+	{
+		while(true)
+		{
+			if(state == EnemyState.Chasing)
+			{
+				int randIndex = Random.Range(0, walkSoundAudioClips.Length);
+				audioSource.PlayOneShot(walkSoundAudioClips[randIndex], 0.1f);
+				yield return new WaitForSeconds(0.35f);
 			}
 			yield return null;
 		}

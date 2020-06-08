@@ -6,6 +6,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	#region Variables
 	[SerializeField] private LayerMask targetMask = default;                                // Target Layer.
 	[SerializeField] private LayerMask groundMask = default;                                // Ground Layer.
+
 	[Header("Player Properties")]
 	[SerializeField] private float health = default;                                        // Health of the player
 	[SerializeField] private float mana = default;                                          // Mana of the player.
@@ -16,7 +17,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private GameObject currentTarget = default;                            // Current Target of the player.
 	[SerializeField] private GameObject previousTarget = default;                           // Next Target of the player.
 
-	[Header("Attack Spells")]
+	[Header("Attack Properties")]
 	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
 	[SerializeField] private float primaryAttackCooldown = 1f;                              // Cooldown that starts after the use of the Primary Attack.
 	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Primary Attack Prefab.
@@ -30,6 +31,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 
 	[Header("Movement Properties")]
 	private float movementSpeed = default;                                                  // Final movement speed depending on input.
+	private float horInput = default;
+	private float verInput = default;
 	[SerializeField] private float walkSpeed = default;                                     // Base Walking speed.
 	[SerializeField] private float runSpeed = default;                                      // Base Running speed.
 	[SerializeField] private float runBuildUpSpeed = default;                               // How fast the player transitions from Walking to running.
@@ -41,6 +44,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private AnimationCurve jumpfallOff = default;                          // What curve to follow when falling downwards.
 	[SerializeField] private float jumpMultiplier = default;                                // How "hard" the player gets pushed upwards.
 	[SerializeField] private KeyCode jumpKey = default;                                     // Which button to press to start jumping.
+	[SerializeField] private float walkSoundInterval = default;                             // The time between movement sounds.
+	[SerializeField] private AudioSource audioSource = default;                             // Reference to the audio source component.
+	[SerializeField] private AudioClip[] walkSoundAudioClips = default;                     // Array with all the walk sound effects.
 
 	[Header("Debugging")]
 	[SerializeField] private bool primaryAttackOnCooldown = false;
@@ -62,6 +68,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	private void Start()
 	{
 		StartCoroutine(ManaRegen());
+		StartCoroutine(PlayMovementAudio());
 	}
 
 	private void Update()
@@ -86,8 +93,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	/// </summary>
 	private void PlayerMovement()
 	{
-		float horInput = Input.GetAxisRaw(horizontalInputName);
-		float verInput = Input.GetAxisRaw(verticalInputName);
+		horInput = Input.GetAxisRaw(horizontalInputName);
+		verInput = Input.GetAxisRaw(verticalInputName);
 
 		Vector3 forwardMovement = transform.forward * verInput;
 		Vector3 rightMovement = transform.right * horInput;
@@ -110,6 +117,24 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			movementSpeed = Mathf.Lerp(movementSpeed, runSpeed, Time.deltaTime * runBuildUpSpeed);
 		else
 			movementSpeed = Mathf.Lerp(movementSpeed, walkSpeed, Time.deltaTime * runBuildUpSpeed);
+	}
+
+	/// <summary>
+	/// Plays movement audio depending on the movement speed.
+	/// </summary>
+	/// <returns></returns>
+	private IEnumerator PlayMovementAudio()
+	{
+		while(true)
+		{
+			if(charController.velocity != Vector3.zero)
+			{
+				int randIndex = Random.Range(0, walkSoundAudioClips.Length);
+				audioSource.PlayOneShot(walkSoundAudioClips[randIndex], 0.1f);
+				yield return new WaitForSeconds(walkSoundInterval / movementSpeed);
+			}
+			yield return null;
+		}
 	}
 
 	/// <summary>
@@ -236,7 +261,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		yield return new WaitForSeconds(primaryAttackCooldown);
 		primaryAttackOnCooldown = false;
 	}
-	
+
 	/// <summary>
 	/// Toggles the Secundary attack cooldown.
 	/// </summary>

@@ -6,10 +6,14 @@ public class AudioManager : MonoBehaviour
 	private AudioManager instance = null;
 	#endregion
 
+	#region Properties
+	public AudioManager Instance { get => instance; set => instance = value; }
+	#endregion
+
 	#region Monobehaviour
 	private void Awake()
 	{
-		if(!instance || instance != this) instance = this;
+		if(!Instance || Instance != this) Instance = this;
 	}
 	#endregion
 

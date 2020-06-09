@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public enum State
 {
@@ -16,9 +17,10 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float health = default;                                // How much health the AI has.
 	[SerializeField] private float damage = default;                                // How much damage to deal to the player.
 	[SerializeField] private int manaWorth = default;                               // How much Mana the player gets back for killing an AI.
+	[SerializeField] private Image healthBar = default;                             // Reference to the Health Bar Image Component.
 
 	[Header("Core Properties")]
-	[SerializeField] private State state = State.Idle;                    // State of the AI.
+	[SerializeField] private State state = State.Idle;                              // State of the AI.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the AI Gameobject.
 	[SerializeField] private Animator anim = default;                               // Reference to the animator component.
 	[SerializeField] private float onHitAudioVolume = 0.5f;                         // Volume of the on hit audio.
@@ -54,7 +56,6 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		maxMoveSpeed = moveSpeed;
 
 		GetComponent<Outline>().enabled = false;
-
 	}
 
 	private void Update()
@@ -72,6 +73,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		StartCoroutine(MoveToTarget());
 		StartCoroutine(AttackTarget());
 		StartCoroutine(PlayMovementAudio());
+
 	}
 	#endregion
 
@@ -89,7 +91,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 				agent.isStopped = false;
 				Debug.Log("[" + gameObject.name + "]" + " Searching for Target");
 
-				Collider[] colliders = Physics.OverlapSphere(transform.position, targetDetectionRadius);
+				Collider[] colliders = Physics.OverlapSphere(transform.position, targetDetectionRadius, targetMask);
 				Collider nearestCollider = null;
 				float minSqrDistance = Mathf.Infinity;
 				for(int i = 0; i < colliders.Length; i++)
@@ -101,8 +103,11 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 						nearestCollider = colliders[i];
 					}
 				}
-				target = nearestCollider.transform;
-				state = State.Chasing;
+				if(nearestCollider != null)
+				{
+					target = nearestCollider.transform;
+					state = State.Chasing;
+				}
 			}
 			yield return new WaitForSeconds(targetDetectionCheckInterval);
 		}
@@ -177,6 +182,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 	void IDamageable.Damage(float damage)
 	{
 		health -= damage;
+		ChangeHealthbarImageValue(damage);
 		int randIndex = Random.Range(0, onHitAudioClips.Length);
 		AudioManager.GetInstance().PlaySoundFX(onHitAudioClips[randIndex], transform.position, onHitAudioVolume);
 
@@ -214,16 +220,21 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		Destroy(GetComponent<NavMeshAgent>());
 		Destroy(this);
 	}
+
+	private void ChangeHealthbarImageValue(float value)
+	{
+		healthBar.fillAmount -= value / 100f;
+	}
 	#endregion
 
 	#region Debugging
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.blue;
-		Gizmos.DrawWireSphere(transform.position, targetDetectionRadius * transform.localScale.x);
+		Gizmos.DrawWireSphere(transform.position, targetDetectionRadius);
 
 		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(transform.position, targetInteractionRadius * transform.localScale.x);
+		Gizmos.DrawWireSphere(transform.position, targetInteractionRadius);
 	}
 	#endregion
 }

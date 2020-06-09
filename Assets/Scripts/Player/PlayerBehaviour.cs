@@ -18,12 +18,15 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private GameObject previousTarget = default;                           // Next Target of the player.
 
 	[Header("Attack Properties")]
-	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
-	[SerializeField] private float primaryAttackCooldown = 1f;                              // Cooldown that starts after the use of the Primary Attack.
-	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Primary Attack Prefab.
-	[SerializeField] private float secundaryAttackCooldown = 15f;                           // Cooldown that starts after the use of the Secundary Attack.
 	[SerializeField] private KeyCode primaryAttackKey = default;                            // Primary Attack Key.
 	[SerializeField] private KeyCode secundaryAttackKey = default;                          // Secunday Attack Key.
+	[Space]
+	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
+	[SerializeField] private float primaryAttackCooldown = 1f;                              // Cooldown that starts after the use of the Primary Attack.
+	[SerializeField] private AudioClip primaryAttackAudioClip = default;                    // Audio clip to play when casting Primary attack.
+	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Primary Attack Prefab.
+	[SerializeField] private float secundaryAttackCooldown = 15f;                           // Cooldown that starts after the use of the Secundary Attack.
+	[SerializeField] private AudioClip secundaryAttackAudioClip = default;                    // Audio clip to play when casting Secundary attack.
 	[Space]
 	[SerializeField] private CharacterController charController = default;                  // Reference to the Character Controller component.
 	[SerializeField] private string horizontalInputName = default;                          // Name of the Horizontal Input Axis name.
@@ -218,10 +221,14 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 				case SpellType.TargetBased:
 					if(!primaryAttackOnCooldown)
 					{
+						primaryAttackOnCooldown = true;
+
 						spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
 						spellGO.GetComponent<Spell>().Target = currentTarget.transform;
+
 						mana -= spellGO.GetComponent<Spell>().ManaCost;
-						primaryAttackOnCooldown = true;
+
+						AudioManager.GetInstance().PlaySoundFX(primaryAttackAudioClip, transform.position, 0.2f);
 						StartCoroutine(PrimaryAttackCooldown());
 					}
 					break;
@@ -239,6 +246,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 						if(spellGOSpawnPoint != Vector3.zero)
 						{
 							spellGO = Instantiate(attackSpellToSpawns, spellGOSpawnPoint, transform.rotation);
+							AudioManager.GetInstance().PlaySoundFX(secundaryAttackAudioClip, spellGOSpawnPoint, 0.2f);
 							mana -= spellGO.GetComponent<Spell>().ManaCost;
 						}
 						secundaryAttackOnCooldown = true;

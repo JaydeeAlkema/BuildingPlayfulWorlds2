@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2677591326824086564}
   - component: {fileID: 4525563038357160625}
   - component: {fileID: 956463114487364730}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,14 +237,18 @@ MonoBehaviour:
   manaRegenInterval: 1
   currentTarget: {fileID: 0}
   previousTarget: {fileID: 0}
+  primaryAttackKey: 323
+  secundaryAttackKey: 324
   primaryAttackPrefab: {fileID: 1985655064596568, guid: d2b4683435cac1a4ba39b235e4451844,
     type: 3}
   primaryAttackCooldown: 1
+  primaryAttackAudioClip: {fileID: 8300000, guid: 0654336eab2c22e44bb2fa2178fdb5d8,
+    type: 3}
   secundaryAttackPrefab: {fileID: 1489250614823085774, guid: 18f5c5be3a54a0743b81d1f43278e05c,
     type: 3}
   secundaryAttackCooldown: 15
-  primaryAttackKey: 323
-  secundaryAttackKey: 324
+  secundaryAttackAudioClip: {fileID: 8300000, guid: a389a6d8a61f5374383862b37dabdf73,
+    type: 3}
   charController: {fileID: 2677591326824086564}
   horizontalInputName: Horizontal
   verticalInputName: Vertical

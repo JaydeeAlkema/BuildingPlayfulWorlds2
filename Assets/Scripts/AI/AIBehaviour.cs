@@ -10,7 +10,7 @@ public enum EnemyState
 	Dead
 }
 
-public class EnemyBehaviour : MonoBehaviour, IDamageable
+public class AIBehaviour : MonoBehaviour, IDamageable
 {
 	#region Variables
 	[SerializeField] private float health = default;                                // How much health the enemy has.
@@ -21,9 +21,12 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private EnemyState state = EnemyState.Idle;                    // State of the Enemy.
 	[SerializeField] private NavMeshAgent agent = default;                          // Reference to the NavMeshAgent component on the Enemy Gameobject.
 	[SerializeField] private Animator anim = default;                               // Reference to the animator component.
+	[SerializeField] private float onHitAudioVolume = 0.5f;                         // Volume of the on hit audio.
+	[SerializeField] private AudioClip[] onHitAudioClips = default;                 // Array with all the on hit sound effects.
 
 	[Header("Movement Properties")]
 	[SerializeField] private float moveSpeed = 3.5f;                                // Walking speed of the Enemy.
+	[SerializeField] private float movementAudioVolume = 0.1f;                      // Volume of the movement audio.
 	[SerializeField] private AudioSource audioSource = default;                     // Reference to the audio source component.
 	[SerializeField] private AudioClip[] walkSoundAudioClips = default;             // Array with all the walk sound effects.
 
@@ -52,7 +55,6 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 
 		GetComponent<Outline>().enabled = false;
 
-		StartCoroutine(PlayMovementAudio());
 	}
 
 	private void Update()
@@ -69,6 +71,7 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 		StartCoroutine(SearchForTarget());
 		StartCoroutine(MoveToTarget());
 		StartCoroutine(AttackTarget());
+		StartCoroutine(PlayMovementAudio());
 	}
 	#endregion
 
@@ -85,9 +88,22 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			if(state == EnemyState.Idle)
 			{
 				agent.isStopped = false;
-				if(!target) target = GameManager.Instance.PlayerInstance.transform;
-				else state = EnemyState.Chasing;
 				Debug.Log("[" + gameObject.name + "]" + " Searching for Target");
+
+				Collider[] colliders = Physics.OverlapSphere(transform.position, targetDetectionRadius);
+				Collider nearestCollider = null;
+				float minSqrDistance = Mathf.Infinity;
+				for(int i = 0; i < colliders.Length; i++)
+				{
+					float sqrDistanceToCenter = (transform.position - colliders[i].transform.position).sqrMagnitude;
+					if(sqrDistanceToCenter < minSqrDistance)
+					{
+						minSqrDistance = sqrDistanceToCenter;
+						nearestCollider = colliders[i];
+					}
+				}
+				target = nearestCollider.transform;
+				state = EnemyState.Chasing;
 			}
 			yield return new WaitForSeconds(targetDetectionCheckInterval);
 		}
@@ -146,7 +162,8 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 			if(state == EnemyState.Chasing)
 			{
 				int randIndex = Random.Range(0, walkSoundAudioClips.Length);
-				audioSource.PlayOneShot(walkSoundAudioClips[randIndex], 0.1f);
+				audioSource.PlayOneShot(walkSoundAudioClips[randIndex], movementAudioVolume);
+				Debug.Log("Playing audio.");
 				yield return new WaitForSeconds(0.35f);
 			}
 			yield return null;
@@ -161,6 +178,9 @@ public class EnemyBehaviour : MonoBehaviour, IDamageable
 	void IDamageable.Damage(float damage)
 	{
 		health -= damage;
+		int randIndex = Random.Range(0, onHitAudioClips.Length);
+		AudioManager.GetInstance().PlaySoundFX(onHitAudioClips[randIndex], transform.position, onHitAudioVolume);
+
 		if(health <= 0)
 		{
 			state = EnemyState.Dead;

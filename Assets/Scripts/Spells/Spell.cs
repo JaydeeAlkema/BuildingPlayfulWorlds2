@@ -17,7 +17,6 @@ public class Spell : MonoBehaviour
 	#region Variables
 	[SerializeField] private SpellType spellType = SpellType.TargetBased;   // Type of the spell.
 	[SerializeField] private string spellName = default;                    // Name of the spell.
-	[SerializeField] private float manaCost = default;                      // How much mana it costs to cast this spell.
 	[SerializeField] private LayerMask targetMask = default;                // The layer for the enemies.
 
 	[Header("Base Variables")]
@@ -42,10 +41,8 @@ public class Spell : MonoBehaviour
 
 	#region Properties
 	public Transform Target { get => target; set => target = value; }
-	public float ManaCost { get => manaCost; set => manaCost = value; }
 	public SpellType SpellType { get => spellType; set => spellType = value; }
 	#endregion
-
 
 	#region Monobehaviour Callbacks
 	private void Start()

@@ -238,16 +238,25 @@ MonoBehaviour:
   currentTarget: {fileID: 0}
   previousTarget: {fileID: 0}
   primaryAttackKey: 323
-  secundaryAttackKey: 324
+  primaryAttackManaCost: 85
   primaryAttackPrefab: {fileID: 1985655064596568, guid: d2b4683435cac1a4ba39b235e4451844,
     type: 3}
   primaryAttackCooldown: 1
   primaryAttackAudioClip: {fileID: 8300000, guid: 0654336eab2c22e44bb2fa2178fdb5d8,
     type: 3}
+  secundaryAttackKey: 324
+  secundaryAttackManaCost: 300
   secundaryAttackPrefab: {fileID: 1489250614823085774, guid: 18f5c5be3a54a0743b81d1f43278e05c,
     type: 3}
   secundaryAttackCooldown: 15
   secundaryAttackAudioClip: {fileID: 8300000, guid: a389a6d8a61f5374383862b37dabdf73,
+    type: 3}
+  summoningAttackKey: 101
+  summoningAttackManaCost: 450
+  summoningPrefab: {fileID: 956463114487364709, guid: 85e8ec9a76ba52b4e9e205dcf9ac2ee1,
+    type: 3}
+  summoningCooldown: 15
+  summoningAttackAudioClip: {fileID: 8300000, guid: d76af99a71270b84baecf3bc49ca4f6a,
     type: 3}
   charController: {fileID: 2677591326824086564}
   horizontalInputName: Horizontal

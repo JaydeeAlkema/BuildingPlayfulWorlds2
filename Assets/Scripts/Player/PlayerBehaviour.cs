@@ -17,16 +17,24 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private GameObject currentTarget = default;                            // Current Target of the player.
 	[SerializeField] private GameObject previousTarget = default;                           // Next Target of the player.
 
-	[Header("Attack Properties")]
+	[Header("Primary Spell")]
 	[SerializeField] private KeyCode primaryAttackKey = default;                            // Primary Attack Key.
-	[SerializeField] private KeyCode secundaryAttackKey = default;                          // Secunday Attack Key.
-	[Space]
+	[SerializeField] private float primaryAttackManaCost = default;                         // How much mana it costs to cast this spell.
 	[SerializeField] private GameObject primaryAttackPrefab = default;                      // Primary Attack Prefab.
 	[SerializeField] private float primaryAttackCooldown = 1f;                              // Cooldown that starts after the use of the Primary Attack.
 	[SerializeField] private AudioClip primaryAttackAudioClip = default;                    // Audio clip to play when casting Primary attack.
-	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Primary Attack Prefab.
+	[Header("Secundary Spell")]
+	[SerializeField] private KeyCode secundaryAttackKey = default;                          // Secunday Attack Key.
+	[SerializeField] private float secundaryAttackManaCost = default;                           // How much mana it costs to cast this spell.
+	[SerializeField] private GameObject secundaryAttackPrefab = default;                    // Secundary Attack Prefab.
 	[SerializeField] private float secundaryAttackCooldown = 15f;                           // Cooldown that starts after the use of the Secundary Attack.
-	[SerializeField] private AudioClip secundaryAttackAudioClip = default;                    // Audio clip to play when casting Secundary attack.
+	[SerializeField] private AudioClip secundaryAttackAudioClip = default;                  // Audio clip to play when casting Secundary attack.
+	[Header("Summoning Spell")]
+	[SerializeField] private KeyCode summoningAttackKey = default;                          // Summoning Attack Key.
+	[SerializeField] private float summoningAttackManaCost = default;                           // How much mana it costs to cast this spell.
+	[SerializeField] private GameObject summoningPrefab = default;                          // Summoning Spell Prefab.
+	[SerializeField] private float summoningCooldown = 15f;                                 // Cooldown that starts after the use of the Sumonning Attack.
+	[SerializeField] private AudioClip summoningAttackAudioClip = default;                  // Audio clip to play when casting the summoning Spell.
 	[Space]
 	[SerializeField] private CharacterController charController = default;                  // Reference to the Character Controller component.
 	[SerializeField] private string horizontalInputName = default;                          // Name of the Horizontal Input Axis name.
@@ -197,26 +205,32 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 			{
 				if(Input.GetKeyDown(primaryAttackKey))
 				{
-					AttackEvent(primaryAttackPrefab);
+					AttackEvent(primaryAttackPrefab, primaryAttackManaCost, SpellType.TargetBased, primaryAttackAudioClip);
 				}
 			}
 		}
 		if(Input.GetKeyDown(secundaryAttackKey))
 		{
-			AttackEvent(secundaryAttackPrefab);
+			AttackEvent(secundaryAttackPrefab, secundaryAttackManaCost, SpellType.GroundBased, secundaryAttackAudioClip);
+		}
+		if(Input.GetKeyDown(summoningAttackKey))
+		{
+			AttackEvent(summoningPrefab, summoningAttackManaCost, SpellType.GroundBased, summoningAttackAudioClip);
 		}
 	}
 
 	/// <summary>
 	/// Attack Event.
+	/// This is a REALLY bad implemenation of spell casting.
+	/// But the deadlines got the best of me and I decided not to change this...
 	/// </summary>
 	/// <param name="attackSpellToSpawns"></param>
-	private void AttackEvent(GameObject attackSpellToSpawns)
+	private void AttackEvent(GameObject attackSpellToSpawns, float manaCost, SpellType spellType, AudioClip onCastAudio)
 	{
-		if(mana - attackSpellToSpawns.GetComponent<Spell>().ManaCost > 0)
+		if(mana - manaCost > 0)
 		{
 			GameObject spellGO = null;
-			switch(attackSpellToSpawns.GetComponent<Spell>().SpellType)
+			switch(spellType)
 			{
 				case SpellType.TargetBased:
 					if(!primaryAttackOnCooldown)
@@ -226,9 +240,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 						spellGO = Instantiate(attackSpellToSpawns, transform.position, transform.rotation);
 						spellGO.GetComponent<Spell>().Target = currentTarget.transform;
 
-						mana -= spellGO.GetComponent<Spell>().ManaCost;
+						mana -= manaCost;
 
-						AudioManager.GetInstance().PlaySoundFX(primaryAttackAudioClip, transform.position, 0.2f);
+						AudioManager.GetInstance().PlaySoundFX(onCastAudio, transform.position, 0.2f);
 						StartCoroutine(PrimaryAttackCooldown());
 					}
 					break;
@@ -246,8 +260,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 						if(spellGOSpawnPoint != Vector3.zero)
 						{
 							spellGO = Instantiate(attackSpellToSpawns, spellGOSpawnPoint, transform.rotation);
-							AudioManager.GetInstance().PlaySoundFX(secundaryAttackAudioClip, spellGOSpawnPoint, 0.2f);
-							mana -= spellGO.GetComponent<Spell>().ManaCost;
+							AudioManager.GetInstance().PlaySoundFX(onCastAudio, spellGOSpawnPoint, 0.2f);
+							mana -= manaCost;
 						}
 						secundaryAttackOnCooldown = true;
 						StartCoroutine(SecundaryAttackCooldown());

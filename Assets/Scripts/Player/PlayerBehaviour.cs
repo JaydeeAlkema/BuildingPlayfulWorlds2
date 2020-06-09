@@ -82,8 +82,8 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		if(mana > MaxMana) mana = maxMana;
 
 		if(currentTarget)
-			if(currentTarget.GetComponent<EnemyBehaviour>() != null)
-				if(currentTarget.GetComponent<EnemyBehaviour>().State == EnemyState.Dead) currentTarget = null;
+			if(currentTarget.GetComponent<AIBehaviour>() != null)
+				if(currentTarget.GetComponent<AIBehaviour>().State == State.Dead) currentTarget = null;
 	}
 	#endregion
 
@@ -190,7 +190,7 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	{
 		if(currentTarget)
 		{
-			if(currentTarget.GetComponent<EnemyBehaviour>() != null)
+			if(currentTarget.GetComponent<AIBehaviour>() != null)
 			{
 				if(Input.GetKeyDown(primaryAttackKey))
 				{
@@ -292,9 +292,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 		Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward * 1000f);
 		if(Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetMask))
 		{
-			if(hit.collider.GetComponent<EnemyBehaviour>() != null)
+			if(hit.collider.GetComponent<AIBehaviour>() != null)
 			{
-				if(hit.collider.GetComponent<EnemyBehaviour>().State != EnemyState.Dead)
+				if(hit.collider.GetComponent<AIBehaviour>().State != State.Dead)
 				{
 					GameObject nextTarget = hit.collider.gameObject;
 

@@ -115,7 +115,7 @@ public class Spell : MonoBehaviour
 			foreach(GameObject enemy in targetsInRadius)
 			{
 				enemy.GetComponent<IDamageable>()?.Damage(damageToDeal);
-				enemy.GetComponent<IDamageable>()?.ImpactMovementSpeed(enemy.GetComponent<EnemyBehaviour>().MoveSpeed / 3f);
+				enemy.GetComponent<IDamageable>()?.ImpactMovementSpeed(enemy.GetComponent<AIBehaviour>().MoveSpeed / 3f);
 			}
 			yield return new WaitForSeconds(spellTick);
 		}

@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
 			RestartGame();
 		}
 
-		if(Input.GetKeyDown(KeyCode.Space))
+		if(Input.GetKeyDown(KeyCode.R))
 		{
 			RestartGame();
 		}

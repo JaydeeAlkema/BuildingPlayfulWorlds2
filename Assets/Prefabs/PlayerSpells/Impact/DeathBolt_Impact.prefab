@@ -43,7 +43,7 @@ ParticleSystem:
   serializedVersion: 6
   lengthInSec: 0.1
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 2
   cullingMode: 3
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -4767,11 +4767,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f3d4ef669f559429f47eff5b21f63d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spellType: 0
   spellName: DeathBolt
-  manaCost: 0
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  damageToDeal: 34
   target: {fileID: 0}
   lerpTime: 0
-  damageToDeal: 34
-  impactRadius: 0.25
   impactParticles: {fileID: 0}
   startingPos: {x: 0, y: 0, z: 0}
+  spellTick: 1
+  spellDuration: 0
+  impactRadius: 0.25
+  targetsInRadius: []

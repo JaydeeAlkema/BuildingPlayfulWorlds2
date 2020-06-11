@@ -194,6 +194,7 @@ MonoBehaviour:
   damage: 10
   manaWorth: 100
   healthBar: {fileID: 1499945605798104673}
+  floatingCanvas: {fileID: 712977228369833471}
   state: 0
   agent: {fileID: 298271831820822560}
   anim: {fileID: 1720056798753705650}
@@ -215,7 +216,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: ab3498a32e926c14d9f50b58cef901ef, type: 3}
   - {fileID: 8300000, guid: f7a5831cc2dceab4ab8065d4364e6f58, type: 3}
   moveSpeed: 3.5
-  movementAudioVolume: 0.1
+  movementAudioVolume: 0.5
   audioSource: {fileID: 8146740039609737585}
   walkSoundAudioClips:
   - {fileID: 8300000, guid: 363c97d0fbf37044faf10b8e1b7551da, type: 3}
@@ -230,8 +231,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1024
   target: {fileID: 0}
-  targetDestinationUpdateInterval: 0.1
-  targetDetectionCheckInterval: 0.1
+  targetDestinationUpdateInterval: 0.5
+  targetDetectionCheckInterval: 0.5
   targetInteractionInterval: 1
   targetDetectionRadius: 25
   targetInteractionRadius: 2

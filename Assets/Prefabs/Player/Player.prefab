@@ -231,8 +231,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   health: 100
-  mana: 500
-  maxMana: 500
+  mana: 1000
+  maxMana: 1000
   manaRegenAmount: 10
   manaRegenInterval: 1
   currentTarget: {fileID: 0}

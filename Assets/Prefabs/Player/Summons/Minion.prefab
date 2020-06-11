@@ -86,9 +86,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  damage: 5
+  damage: 25
   manaWorth: 100
   healthBar: {fileID: 970195456799646191}
+  floatingCanvas: {fileID: 0}
   state: 0
   agent: {fileID: 298271831820822560}
   anim: {fileID: 1720056798753705650}
@@ -103,7 +104,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 41d5a73a137be494db2db8efe0531348, type: 3}
   - {fileID: 8300000, guid: d6dc1f7bce0f4d640bfe6a3692167d37, type: 3}
   - {fileID: 8300000, guid: ad2c71c162713104898e912f5f1d1a50, type: 3}
-  moveSpeed: 3.5
+  moveSpeed: 4.5
   movementAudioVolume: 0.1
   audioSource: {fileID: 8146740039609737585}
   walkSoundAudioClips:

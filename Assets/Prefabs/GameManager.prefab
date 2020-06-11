@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: 0
+  minimapCam: {fileID: 0}
   dungeonPrefab: {fileID: 11400000, guid: a2395bb8a91944f21b621f2614d6db99, type: 3}
   playerPrefab: {fileID: 956463114487364709, guid: 4c6e2fb6da7fd4f5aa5c8463ebb46e79,
     type: 3}

@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
 
 	[SerializeField] private GameState gameState = GameState.Active;                // The state of the game.
 	[Header("Dungeon and Player Properties")]
+	[SerializeField] private GameObject minimapCam = default;                       // Reference to the Minimap Camera.
 	[SerializeField] private Dungeon dungeonPrefab = default;                       // Reference to the dungeon prefab.
 	[SerializeField] private GameObject playerPrefab = default;                     // Reference to the Player prefab.
 	[SerializeField] private DungeonCell cellToSpawnPlayerOn = default;             // Which cell the player to spawn on.
@@ -103,6 +104,7 @@ public class GameManager : MonoBehaviour
 		{
 			playerInstance.transform.position = new Vector3(cellToSpawnPlayerOn.transform.position.x, .25f, cellToSpawnPlayerOn.transform.position.z);
 			playerInstance.SetActive(true);
+			minimapCam.GetComponent<SmoothFollow>().Target = playerInstance.transform;
 		}
 	}
 	private void RestartGame()

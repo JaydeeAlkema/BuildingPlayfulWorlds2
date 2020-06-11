@@ -35,15 +35,12 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private GameObject summoningPrefab = default;                          // Summoning Spell Prefab.
 	[SerializeField] private float summoningCooldown = 15f;                                 // Cooldown that starts after the use of the Sumonning Attack.
 	[SerializeField] private AudioClip summoningAttackAudioClip = default;                  // Audio clip to play when casting the summoning Spell.
-	[Space]
+
+	[Header("Movement Properties")]
 	[SerializeField] private CharacterController charController = default;                  // Reference to the Character Controller component.
 	[SerializeField] private string horizontalInputName = default;                          // Name of the Horizontal Input Axis name.
 	[SerializeField] private string verticalInputName = default;                            // Name of the Vertical Input Axis name.
-
-	[Header("Movement Properties")]
-	private float movementSpeed = default;                                                  // Final movement speed depending on input.
-	private float horInput = default;
-	private float verInput = default;
+	[Space]
 	[SerializeField] private float walkSpeed = default;                                     // Base Walking speed.
 	[SerializeField] private float runSpeed = default;                                      // Base Running speed.
 	[SerializeField] private float runBuildUpSpeed = default;                               // How fast the player transitions from Walking to running.
@@ -58,6 +55,9 @@ public class PlayerBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float walkSoundInterval = default;                             // The time between movement sounds.
 	[SerializeField] private AudioSource audioSource = default;                             // Reference to the audio source component.
 	[SerializeField] private AudioClip[] walkSoundAudioClips = default;                     // Array with all the walk sound effects.
+	private float movementSpeed = default;                                                  // Final movement speed depending on input.
+	private float horInput = default;
+	private float verInput = default;
 
 	[Header("Debugging")]
 	[SerializeField] private bool primaryAttackOnCooldown = false;

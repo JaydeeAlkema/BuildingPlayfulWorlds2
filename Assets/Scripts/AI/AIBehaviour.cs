@@ -18,6 +18,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 	[SerializeField] private float damage = default;                                // How much damage to deal to the player.
 	[SerializeField] private int manaWorth = default;                               // How much Mana the player gets back for killing an AI.
 	[SerializeField] private Image healthBar = default;                             // Reference to the Health Bar Image Component.
+	[SerializeField] private GameObject floatingCanvas = default;                  // Reference to the floating canvas.
 
 	[Header("Core Properties")]
 	[SerializeField] private State state = State.Idle;                              // State of the AI.
@@ -73,7 +74,6 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		StartCoroutine(MoveToTarget());
 		StartCoroutine(AttackTarget());
 		StartCoroutine(PlayMovementAudio());
-
 	}
 	#endregion
 
@@ -89,8 +89,8 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 			if(state == State.Idle)
 			{
 				agent.isStopped = false;
-				Debug.Log("[" + gameObject.name + "]" + " Searching for Target");
 
+				// Find nearest collider.
 				Collider[] colliders = Physics.OverlapSphere(transform.position, targetDetectionRadius, targetMask);
 				Collider nearestCollider = null;
 				float minSqrDistance = Mathf.Infinity;
@@ -103,6 +103,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 						nearestCollider = colliders[i];
 					}
 				}
+
 				if(nearestCollider != null)
 				{
 					target = nearestCollider.transform;
@@ -123,12 +124,11 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		{
 			if(state == State.Chasing)
 			{
+				if(Vector3.Distance(transform.position, target.position) < targetInteractionRadius) state = State.Attacking;
+
 				agent.isStopped = false;
 				agent.speed = moveSpeed;
 				agent.destination = target.position;
-				Debug.Log("[" + gameObject.name + "]" + " Moving Towards Target");
-
-				if(Vector3.Distance(transform.position, target.position) < targetInteractionRadius) state = State.Attacking;
 			}
 			yield return new WaitForSeconds(targetDestinationUpdateInterval);
 		}
@@ -145,11 +145,10 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 			yield return new WaitForSeconds(targetInteractionInterval);
 			if(state == State.Attacking)
 			{
+				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = State.Chasing;
+
 				agent.isStopped = true;
 				target.GetComponent<IDamageable>()?.Damage(damage);
-
-				Debug.Log("[" + gameObject.name + "]" + " Attacking Target");
-				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = State.Chasing;
 			}
 			yield return null;
 		}
@@ -167,7 +166,6 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 			{
 				int randIndex = Random.Range(0, walkSoundAudioClips.Length);
 				audioSource.PlayOneShot(walkSoundAudioClips[randIndex], movementAudioVolume);
-				Debug.Log("Playing audio.");
 				yield return new WaitForSeconds(0.35f);
 			}
 			yield return null;
@@ -218,6 +216,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		Destroy(GetComponent<Outline>());
 		Destroy(GetComponent<CapsuleCollider>());
 		Destroy(GetComponent<NavMeshAgent>());
+		Destroy(floatingCanvas);
 		Destroy(this);
 	}
 

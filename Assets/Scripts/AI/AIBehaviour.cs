@@ -86,29 +86,26 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 	{
 		while(true)
 		{
-			if(state == State.Idle)
+			agent.isStopped = false;
+
+			// Find nearest collider.
+			Collider[] colliders = Physics.OverlapSphere(transform.position, targetDetectionRadius, targetMask);
+			Collider nearestCollider = null;
+			float minSqrDistance = Mathf.Infinity;
+			for(int i = 0; i < colliders.Length; i++)
 			{
-				agent.isStopped = false;
-
-				// Find nearest collider.
-				Collider[] colliders = Physics.OverlapSphere(transform.position, targetDetectionRadius, targetMask);
-				Collider nearestCollider = null;
-				float minSqrDistance = Mathf.Infinity;
-				for(int i = 0; i < colliders.Length; i++)
+				float sqrDistanceToCenter = (transform.position - colliders[i].transform.position).sqrMagnitude;
+				if(sqrDistanceToCenter < minSqrDistance)
 				{
-					float sqrDistanceToCenter = (transform.position - colliders[i].transform.position).sqrMagnitude;
-					if(sqrDistanceToCenter < minSqrDistance)
-					{
-						minSqrDistance = sqrDistanceToCenter;
-						nearestCollider = colliders[i];
-					}
+					minSqrDistance = sqrDistanceToCenter;
+					nearestCollider = colliders[i];
 				}
+			}
 
-				if(nearestCollider != null)
-				{
-					target = nearestCollider.transform;
-					state = State.Chasing;
-				}
+			if(nearestCollider != null)
+			{
+				target = nearestCollider.transform;
+				state = State.Chasing;
 			}
 			yield return new WaitForSeconds(targetDetectionCheckInterval);
 		}
@@ -146,6 +143,7 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 			if(state == State.Attacking)
 			{
 				if(Vector3.Distance(transform.position, target.position) > targetInteractionRadius) state = State.Chasing;
+				if(target.GetComponent<AIBehaviour>() && target.GetComponent<AIBehaviour>().state == State.Dead) target = null; state = State.Idle;
 
 				agent.isStopped = true;
 				target.GetComponent<IDamageable>()?.Damage(damage);
@@ -220,6 +218,10 @@ public class AIBehaviour : MonoBehaviour, IDamageable
 		Destroy(this);
 	}
 
+	/// <summary>
+	/// Changes the floating health bar image value.
+	/// </summary>
+	/// <param name="value"></param>
 	private void ChangeHealthbarImageValue(float value)
 	{
 		healthBar.fillAmount -= value / 100f;

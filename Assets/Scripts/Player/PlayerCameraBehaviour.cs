@@ -24,6 +24,9 @@ public class PlayerCameraBehaviour : MonoBehaviour
 		RotateCamera();
 	}
 
+	/// <summary>
+	/// Rotates camera relative to the mouse movement.
+	/// </summary>
 	private void RotateCamera()
 	{
 		float multiplier = mouseSensitivity;
@@ -49,6 +52,10 @@ public class PlayerCameraBehaviour : MonoBehaviour
 		playerBody.Rotate(Vector3.up * mouseX);
 	}
 
+	/// <summary>
+	/// Clamps rotation so the player cant do loops with the camera.
+	/// </summary>
+	/// <param name="value"></param>
 	private void ClampXAxisRotationToValue(float value)
 	{
 		Vector3 eulerRotation = transform.eulerAngles;
@@ -56,6 +63,10 @@ public class PlayerCameraBehaviour : MonoBehaviour
 		transform.eulerAngles = eulerRotation;
 	}
 
+	/// <summary>
+	/// (un)locks the cursor.
+	/// </summary>
+	/// <param name="lockState"></param>
 	private void LockCursor(bool lockState)
 	{
 		Cursor.lockState = lockState ? CursorLockMode.Locked : CursorLockMode.None;

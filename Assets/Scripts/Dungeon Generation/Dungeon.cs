@@ -35,6 +35,10 @@ public class Dungeon : MonoBehaviour
 	#endregion
 
 	#region Functions
+	/// <summary>
+	/// Starts the generation of the maze.
+	/// </summary>
+	/// <returns></returns>
 	public IEnumerator Generate()
 	{
 		cells = new DungeonCell[size.x, size.z];
@@ -60,6 +64,10 @@ public class Dungeon : MonoBehaviour
 		yield return new WaitForEndOfFrame();
 	}
 
+	/// <summary>
+	/// Bakes the navmesh of the whole dungeon so the AI can navigate...
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator BakeNavMeshSurfaces()
 	{
 		Debug.Log("Baking NavMesh!");
@@ -68,6 +76,10 @@ public class Dungeon : MonoBehaviour
 		yield return null;
 	}
 
+	/// <summary>
+	/// Beginning of the Maze Generation.
+	/// </summary>
+	/// <param name="activeCells"></param>
 	private void DoFirstGenerationStep(List<DungeonCell> activeCells)
 	{
 		DungeonCell newCell = CreateCell(GetRandomCoordinates());
@@ -75,6 +87,10 @@ public class Dungeon : MonoBehaviour
 		activeCells.Add(newCell);
 	}
 
+	/// <summary>
+	/// Once first generation step has finished we can continue generating the maze.
+	/// </summary>
+	/// <param name="activeCells"></param>
 	private void DoNextGenerationStep(List<DungeonCell> activeCells)
 	{
 		int currentIndex = activeCells.Count - 1;
@@ -110,6 +126,11 @@ public class Dungeon : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Creates a Cell.
+	/// </summary>
+	/// <param name="indexToExclude"></param>
+	/// <returns></returns>
 	private DungeonCell CreateCell(IntVector2 coordinates)
 	{
 		DungeonCell newCell = Instantiate(cellPrefab) as DungeonCell;
@@ -121,6 +142,11 @@ public class Dungeon : MonoBehaviour
 		return newCell;
 	}
 
+	/// <summary>
+	/// Creates a Passage. a.k.a. an empty cell.
+	/// </summary>
+	/// <param name="indexToExclude"></param>
+	/// <returns></returns>
 	private void CreatePassage(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
 		DungeonPassage prefab = Random.value < doorProbability ? doorPrefab : passagePrefab;
@@ -138,6 +164,11 @@ public class Dungeon : MonoBehaviour
 		passage.Initialize(otherCell, cell, direction.GetOpposite());
 	}
 
+	/// <summary>
+	/// Creates a Passage in the same room for interesting generated rooms..
+	/// </summary>
+	/// <param name="indexToExclude"></param>
+	/// <returns></returns>
 	private void CreatePassageInSameRoom(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
 		DungeonPassage passage = Instantiate(passagePrefab) as DungeonPassage;
@@ -152,6 +183,11 @@ public class Dungeon : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Creates a Wall.
+	/// </summary>
+	/// <param name="indexToExclude"></param>
+	/// <returns></returns>
 	private void CreateWall(DungeonCell cell, DungeonCell otherCell, DungeonDirection direction)
 	{
 		DungeonWall wall = Instantiate(wallPrefab) as DungeonWall;
@@ -163,6 +199,11 @@ public class Dungeon : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Creates a Room.
+	/// </summary>
+	/// <param name="indexToExclude"></param>
+	/// <returns></returns>
 	private DungeonRoom CreateRoom(int indexToExclude)
 	{
 		DungeonRoom newRoom = ScriptableObject.CreateInstance<DungeonRoom>();
@@ -179,6 +220,11 @@ public class Dungeon : MonoBehaviour
 		return newRoom;
 	}
 
+	/// <summary>
+	/// Adds enemies the all the rooms.
+	/// This depends on the room settings.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator AddEnemiesToRooms()
 	{
 		for(int r = 0; r < rooms.Count; r++)
@@ -187,12 +233,6 @@ public class Dungeon : MonoBehaviour
 			for(int c = 0; c < amountOfEnemiesToSpawn; c++)
 			{
 				int randCellIndex = Random.Range(0, rooms[r].Cells.Count);
-
-				// This seems to work 1 / 10th of the time
-				//while(rooms[r].Cells[randCellIndex].occupied)
-				//{
-				//	randCellIndex = Random.Range(0, rooms[r].Cells.Count);
-				//}
 
 				GameObject newEnemy = Instantiate(enemyPrefab, rooms[r].Cells[randCellIndex].transform.position, Quaternion.identity, GameManager.Instance.EnemyOnInstantiateParent);
 				newEnemy.name = "Enemy [" + enemyIndex + "]";

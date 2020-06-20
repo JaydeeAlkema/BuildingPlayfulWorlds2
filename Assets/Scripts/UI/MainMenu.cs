@@ -9,16 +9,17 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
 	#region Functions
+	/// <summary>
+	/// Starts the main game scene.
+	/// </summary>
 	public void StartGame()
 	{
 		SceneManager.LoadScene(1);
 	}
 
-	public void ToggleOptionsMenu()
-	{
-		// To be implemented
-	}
-
+	/// <summary>
+	/// Quits the game.
+	/// </summary>
 	public void QuitGame()
 	{
 		Application.Quit();

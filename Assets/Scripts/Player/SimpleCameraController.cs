@@ -6,6 +6,9 @@
 
 using UnityEngine;
 
+/// <summary>
+/// Standard camera controller from the URP asset pack.
+/// </summary>
 namespace UnityTemplateProjects
 {
 	public class SimpleCameraController : MonoBehaviour

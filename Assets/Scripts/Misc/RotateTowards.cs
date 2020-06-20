@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// A simple class used by the floating healthbars so it always faces the player.
+/// </summary>
 public class RotateTowards : MonoBehaviour
 {
 	#region Variables

@@ -85,6 +85,10 @@ public class GameManager : MonoBehaviour
 	#endregion
 
 	#region Private Functions
+	/// <summary>
+	/// Handles everything that should be done when beginning the game.
+	/// </summary>
+	/// <returns></returns>
 	private IEnumerator BeginGame()
 	{
 		if(playerPrefab != null)
